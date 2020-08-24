@@ -1,8 +1,13 @@
 import Vue from 'vue'
 import 'vant/lib/button/style'
-import { Button, Toast } from 'vant'
+import { Button, Toast, Dialog, Lazyload } from 'vant'
 
-Vue.use(Button).use(Toast)
+Vue.use(Button)
+  .use(Toast)
+  .use(Dialog)
+  .use(Lazyload, {
+    lazyComponent: true
+  })
 
 // 将所有 loading Toast 设置为背景不可点击
 Toast.setDefaultOptions('loading', { forbidClick: true })
