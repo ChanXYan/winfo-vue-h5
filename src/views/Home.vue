@@ -7,9 +7,16 @@
 
 <script>
 export default {
-  name: "Home",
-  components: {}
-};
+  name: 'Home',
+  components: {},
+  mounted() {
+    this.toast('aaa')
+    this.loading()
+    setTimeout(() => {
+      this.hideToast()
+    }, 2000)
+  }
+}
 </script>
 
 <style scope lang="scss">
