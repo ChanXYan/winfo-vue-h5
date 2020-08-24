@@ -1,12 +1,17 @@
-import Vue from "vue";
-import App from "./App.vue";
-import router from "./router";
-import store from "./store";
+import Vue from 'vue'
+import App from './App.vue'
+import router from './router'
+import store from './store'
 
-Vue.config.productionTip = false;
+// vant 按需加载
+import './utils/vantImport'
+import 'lib-flexible/flexible' // px2rem适配
+import './rem'
+
+Vue.config.productionTip = false
 
 new Vue({
   router,
   store,
-  render: h => h(App)
-}).$mount("#app");
+  render: (h) => h(App)
+}).$mount('#app')

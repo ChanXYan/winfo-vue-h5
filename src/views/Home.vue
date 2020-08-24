@@ -1,18 +1,27 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <van-button type="primary">主要按钮</van-button>
+    <button class="aa">FSC检查</button>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
-
 export default {
   name: "Home",
-  components: {
-    HelloWorld
-  }
+  components: {}
 };
 </script>
+
+<style scope lang="scss">
+.home {
+  width: 750px;
+  height: 100px;
+  background: red;
+  .aa {
+    width: 335px;
+    height: 88px;
+    background: #000;
+    box-sizing: border-box;
+  }
+}
+</style>
