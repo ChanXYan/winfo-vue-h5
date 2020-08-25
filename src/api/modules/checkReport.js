@@ -14,6 +14,14 @@ export default {
   },
   // 历史记录
   searchHistory () {
-    return service.get(`${baseUrl}/sz-mini-program/nationReport/searchHistory`)
+    console.log(777)
+    return service.get(`/api/sz-mini-program/nationReport/searchHistory`)
+  },
+  // 删除历史记录
+  deleteHistory () {
+    return service.delete(`${baseUrl}/sz-mini-program/report/deleteHistory`)
+  },
+  test () {
+    return service.get('http://192.168.1.192:2228/nav/getNavigationalElementSimpleList?typeId=253&typePid=14')
   }
 }

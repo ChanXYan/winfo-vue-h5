@@ -1,6 +1,6 @@
 /* eslint-disable*/
 import axios from 'axios'
-
+import { Toast } from 'vant'
 import { baseUrl } from './config'
 
 let alertInstance = null
@@ -13,17 +13,20 @@ axios.interceptors.request.use(
       ? 'Bearer ' + window.ls.get('token')
       : ''
 
+
     if (config.headers['delToken']) {
       delete config.headers['Authorization']
       delete config.headers['delToken']
     }
 
-    if (config.method === 'get' && config.loading) {
-      loading()
+    if ((config.method === 'get' || config.method === 'delete') && config.loading) {
+      console.log(Toast)
+      // loading()
+      window.loading && window.loading()
     }
 
     if (config.method === 'post') {
-      config[0] && loading()
+      config[0] && window.loading && window.loading()
     }
 
     return config
@@ -33,7 +36,8 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   (response) => {
-    loaded()
+
+    window.hideToast && window.hideToast()
     let msg = ''
     switch (response.data.code) {
       case 0:
@@ -117,22 +121,22 @@ instance.interceptors.response.use(
   }
 )
 // 注： duration = 0 时，onClose 无效，toast 不会消失；隐藏 toast 需要手动调用 hide
-function loading(msg = '加载中', duration = 0, onClose, mask = true) {
+function loading (msg = '加载中', duration = 0, onClose, mask = true) {
   Toast.loading(msg, duration, onClose, false)
 }
 
-function loaded() {
+function loaded () {
   Toast.hide()
 }
 
-function toAuth(msg) {
+function toAuth (msg) {
   alertInstance = Alert(msg, '前往授权', [
     { text: '取消', onPress: () => alertInstance.close(), style: 'default' },
     { text: '确定', onPress: () => toWeapp() }
   ])
 }
 
-function toWeapp() {
+function toWeapp () {
   // 清除首页跳转的传参
   // debugger
 
@@ -140,7 +144,7 @@ function toWeapp() {
 }
 
 export default {
-  get(url, params = {}, headers = {}, loading = true, config = {}) {
+  get (url, params = {}, headers = {}, loading = true, config = {}) {
     return axios.get(url, {
       params,
       headers,
@@ -148,10 +152,17 @@ export default {
       ...config
     })
   },
-  post(url, params = {}, headers = {}, loading = true) {
+  post (url, params = {}, headers = {}, loading = true) {
     return axios.post(url, params, loading)
   },
-  filePost(url, params = {}, headers = {}, loading = true) {
+  delete (url, params = {}, headers = {}, loading = true) {
+    return axios.delete(url, {
+      params,
+      headers,
+      loading,
+    })
+  },
+  filePost (url, params = {}, headers = {}, loading = true) {
     return instance.post(url, params)
   }
 }
