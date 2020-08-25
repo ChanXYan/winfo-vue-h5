@@ -1,7 +1,6 @@
 <template>
   <div class="home">
     <van-button type="primary">主要按钮</van-button>
-    <button class="aa">FSC检查</button>
   </div>
 </template>
 
@@ -9,7 +8,7 @@
 export default {
   name: 'Home',
   components: {},
-  mounted() {
+  mounted () {
     this.toast('aaa')
     this.loading()
     setTimeout(() => {
@@ -19,7 +18,7 @@ export default {
 }
 </script>
 
-<style scope lang="scss">
+<style scope lang="less">
 .home {
   width: 750px;
   height: 100px;
