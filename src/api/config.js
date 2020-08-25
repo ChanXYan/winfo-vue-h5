@@ -4,11 +4,11 @@ const apiUrlObj = {
   development: 'https://m.winfo.pub/sz',
   production: 'https://m.winfo.pub/sz'
 }
-
-const baseUrl = apiUrlObj[env]
+const preUrl = '/api'
+const baseUrl = apiUrlObj[env] + preUrl
 
 const downloadUrl =
   'https://m.winfo.pub/sz/service-ftp/ftp/downLoad?fileUuid='
 const viewUrl = 'https://m.winfo.pub/sz/service-ftp/ftp/view?fileUuid='
 
-export { baseUrl, downloadUrl, viewUrl }
+export { baseUrl, downloadUrl, viewUrl, preUrl }

@@ -22,9 +22,9 @@
         <div class="times">
           <div class="timeChoose" @click="showCalendar = true">
             <span class="iconfont iconcalendar"></span>
-            <p class="time">{{startDate || '开始时间'}}</p>
+            <p class="time">{{startTime || '开始时间'}}</p>
             <p class="mr10 ml10">-</p>
-            <p class="time">{{endDate || '结束时间'}}</p>
+            <p class="time">{{endTime || '结束时间'}}</p>
           </div>
 
           <div class="search" @click="search">搜索</div>
@@ -49,32 +49,27 @@
         >{{item}}</div>
       </div>
     </div>
-    <div class="resultList" v-if="(type === 'result' && resultList.length !== 0)">
-      <div v-for="(item) in resultList" :key="item.inspectNo" class="list">
+
+    <!-- fsc -->
+    <div class="resultList" v-if="(type === 'result' && activeTab===1 && fscList.length !== 0)">
+      <div v-for="(item) in fscList" :key="item.inspectNo" class="list" @click="toDetail(item)">
         <div class="top">
-          <div class="title">{{item.shipNameCn}}</div>
-          <div class="time">{{item.inspectDateTime}}</div>
+          <div class="title">{{item.shipNameEn || '-'}}</div>
+          <div class="time">{{item.inspect_date || '-'}}</div>
         </div>
         <div class="content">
-          <div v-if="activeTab === 2" class="contentWrap">
+          <div class="contentWrap">
             <div class="item">
               <p class="label">检查机构：</p>
-              <div class="value">{{item.orgName || '--'}}</div>
-            </div>
-          </div>
-
-          <div v-if="activeTab === 1" class="contentWrap">
-            <div class="item">
-              <p class="label">检查机构：</p>
-              <div class="value">{{item.orgName}}</div>
+              <div class="value">{{item.orgName || '-'}}</div>
             </div>
             <div class="item">
               <p class="label">检查港口：</p>
-              <div class="value">{{item.portName || '--'}}</div>
+              <div class="value">{{item.port_name || '--'}}</div>
             </div>
             <div class="item">
               <p class="label">未关闭缺陷：</p>
-              <div class="value">{{item.unclosedDefectNum}}</div>
+              <div class="value">{{item.unclosed_defect_num}}</div>
             </div>
           </div>
         </div>
@@ -83,8 +78,26 @@
       </div>
     </div>
 
+    <!-- 现场监督 -->
+    <div class="resultList" v-if="(type === 'result' && activeTab===2 && siteList.length !== 0)">
+      <div v-for="(item) in siteList" :key="item.inspectNo" class="list" @click="toDetail(item)">
+        <div class="top">
+          <div class="title">{{item.ship_name_cn}}</div>
+          <div class="time">{{item.inspect_date}}</div>
+        </div>
+        <div class="content">
+          <div class="contentWrap">
+            <div class="item">
+              <p class="label">检查机构：</p>
+              <div class="value">{{item.orgName || '--'}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <empty
-      v-if="type==='history'? historyList.length === 0 : resultList.length === 0 "
+      v-if="type==='history'? historyList.length === 0 : activeTab === 1 ? fscList.length === 0 : siteList.length === 0"
       msg="暂无搜索结果，请确认船名或MMSI无误"
     />
   </div>
@@ -95,6 +108,7 @@ import { format } from 'date-fns'
 import api from '../../api/index'
 import empty from '@/components/empty.vue'
 export default {
+  name: 'checkReportSearch',
   components: {
     empty
   },
@@ -103,8 +117,8 @@ export default {
       keyword: '',
       activeTab: 1,
       showCalendar: false,
-      startDate: null,
-      endDate: null,
+      startTime: null,
+      endTime: null,
       tabs: [{
         tab: 'FSC检查',
         key: 1
@@ -114,34 +128,66 @@ export default {
       }
       ],
       historyList: [],
-      resultList: [{
-        orgName: 45
-      }],
+      siteList: [],
+      fscList: [],
       type: 'history',//history result
     }
   },
   mounted () {
-    api.test()
     this.searchHistory()
   },
   methods: {
     clickTab (item) {
       this.activeTab = item.key
+      this.search()
     },
     search () {
       this.type = 'result'
+      let { startTime, endTime, keyword, activeTab } = this
+      let params = {
+        startTime: startTime ? startTime + ' 00:00:00' : '',
+        endTime: endTime ? endTime + ' 23:59:59' : '',
+        keyword
+      }
+      activeTab === 1 ? this.fscApi(params) : this.siteApi(params)
     },
     chooseDate (e) {
-      let [startDate, endDate] = e
-      this.startDate = format(startDate, 'yyyy-MM-dd')
-      this.endDate = format(endDate, 'yyyy-MM-dd')
+      let [startTime, endTime] = e
+      this.startTime = format(startTime, 'yyyy-MM-dd')
+      this.endTime = format(endTime, 'yyyy-MM-dd')
       this.showCalendar = false
     },
-    searchHistory () {
-      console.log(this.toast)
+    clickHistory (item) {
+      this.keyword = item
+      this.search()
+    },
+    fscApi (params) {
+      api.flagStateControlQuery(params).then(res => {
+        if (res.code === 200) {
+          this.fscList = res.data.map(item => {
+            let { flagStateControl, flagStateControlDetail, flagStateControlDetailList } = item
+            return { ...flagStateControl, flagStateControlDetail, flagStateControlDetailList }
+          })
+        } else {
+          this.toast(res.msg)
+        }
+      })
+    },
+    siteApi (params) {
 
+      api.siteSupervisionQuery(params).then(res => {
+        if (res.code === 200) {
+          this.siteList = res.data.map(item => {
+            let { siteSupervisionDetail, siteSupervisionDetailList, siteSupervisionReport } = item
+            return { ...siteSupervisionReport, siteSupervisionDetail, siteSupervisionDetailList }
+          })
+        } else {
+          this.toast(res.msg)
+        }
+      })
+    },
+    searchHistory () {
       api.searchHistory().then(res => {
-        console.log(555, this.toast)
         if (res.code === 200) {
           this.historyList = res.data
         } else {
@@ -149,11 +195,38 @@ export default {
         }
       })
     },
-    deleteHistoryApi () {
+    toDetail (item) {
+      let { activeTab } = this
+      let params = activeTab === 1 ? {
+        activeTab,
+        info: {
+          name: item.shipNameEn,
+          mmsi: item.mmsi,
+          ...item
+        },
+        list: item.flagStateControlDetailList,
 
+      } : {
+          activeTab,
+          info: {
+            name: item.ship_name_cn,
+            mmsi: item.mmsi,
+            ...item
+          },
+          list: item.siteSupervisionDetailList
+        }
+      this.$router.push({
+        name: 'checkReportDetail',
+        params: {
+          ...params
+        }
+      })
+    },
+    deleteHistoryApi () {
       api.deleteHistory().then(res => {
         if (res.code === 200) {
           this.toast('已清空')
+          this.historyList = []
         } else {
           this.toast(res.msg)
         }
@@ -163,7 +236,7 @@ export default {
 };
 </script>
 
-<style scope lang="less">
+<style scoped lang="less">
 .container {
   width: 100vw;
   min-height: 100vh;
@@ -274,6 +347,7 @@ export default {
   .resultList {
     width: 718px;
     margin: 0 auto;
+    padding-bottom: 20px;
 
     .list {
       position: relative;

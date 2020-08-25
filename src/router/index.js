@@ -9,16 +9,19 @@ const routes = [
   {
     path: '/',
     name: 'Home',
+    meta: { title: '首页' },
     component: Home
   },
   {
     path: "/checkReportDetail",
-    name: "报告查询详情",
+    name: 'checkReportDetail',
+    meta: { title: '报告查询详情' },
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/checkReport/checkReportDetail.vue')
   }, {
     path: "/checkReportSearch",
-    name: "报告查询",
+    name: "checkReportSearch",
+    meta: { title: '报告查询' },
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/checkReport/checkReportSearch.vue')
   }

@@ -5,13 +5,13 @@ import { baseUrl } from './config'
 
 let alertInstance = null
 
-axios.defaults.timeout = 10000 //普遍接口超时时间 设置为10s
+axios.defaults.timeout = 20000 //普遍接口超时时间 设置为10s
 
 axios.interceptors.request.use(
   (config) => {
-    config.headers['Authorization'] = window.ls.get('token')
-      ? 'Bearer ' + window.ls.get('token')
-      : ''
+    // config.headers['Authorization'] = window.ls.get('token')
+    //   ? 'Bearer ' + window.ls.get('token')
+    //   : ''
 
 
     if (config.headers['delToken']) {

@@ -1,19 +1,19 @@
 <template>
   <div class="container">
     <div class="top">
-      <div class="title">海巡09206</div>
+      <div class="title">{{info.name}}</div>
       <ul class="list">
         <li>
           <span>船舶识别号：</span>
-          <p>2</p>
+          <p>{{info.ship_id || '-'}}</p>
         </li>
         <li>
           <span>MMSI：</span>
-          <p>2132</p>
+          <p>{{info.mmsi}}</p>
         </li>
         <li>
           <span>船舶种类：</span>
-          <p>12312</p>
+          <p>{{info.ship_type || '-'}}</p>
         </li>
       </ul>
     </div>
@@ -21,124 +21,138 @@
     <!-- 检查信息 -->
     <van-collapse class="wrap" v-model="activeNames1">
       <van-collapse-item title="检查信息" name="1">
-        <ul v-if="Object.keys(siteSupervisionDetail).length" class="content">
+        <ul class="content">
           <li>
             <span>检查日期：</span>
-            <p>{{item.addDateTime || '-'}}</p>
+            <p>{{info.inspector_date ||'-'}}</p>
           </li>
           <li>
             <span>检查机构：</span>
-            <p>{{item.comment_code}}</p>
-          </li>
-          <li>
-            <span>缺陷数量：</span>
-            <p></p>
+            <p>{{info.comment_code|| '-'}}</p>
           </li>
           <li>
             <span>安检类型：</span>
-            <p></p>
+            <p>{{info.inspect_type|| '-'}}</p>
           </li>
           <li>
             <span>缺陷数：</span>
-            <p></p>
+            <p>{{info.defect_num|| '-'}}</p>
           </li>
           <li>
             <span>未关闭缺陷数：</span>
-            <p></p>
+            <p>{{info.unclosed_defect_num|| '-'}}</p>
           </li>
 
-          <li>
+          <li v-if="tab === 1">
             <span>检查港口：</span>
-            <p></p>
+            <p>{{info.port_name|| '-'}}</p>
           </li>
           <li>
             <span>滞留标志：</span>
-            <p></p>
+            <p>{{info.detention_mark|| '-'}}</p>
           </li>
           <li>
             <span>纠正标志：</span>
-            <p></p>
+            <p>{{info.correct_mark|| '-'}}</p>
           </li>
           <li>
             <span>初查复查标志：</span>
-            <p></p>
+            <p>{{info.initial_inspect_mark ?'是':'否'}}</p>
           </li>
-          <li>
+          <li v-if="tab === 1">
             <span>安全检查行动：</span>
-            <p></p>
+            <p>{{info.inspect_action|| '-'}}</p>
           </li>
           <li>
             <span>其他说明：</span>
-            <p></p>
+            <p>{{info.other_desc|| '-'}}</p>
           </li>
           <li>
             <span>检查员：</span>
-            <p></p>
+            <p>{{info.inspector_name || '-'}}</p>
           </li>
-          <li>
+          <li v-if="tab === 1">
             <span>实习检查员：</span>
-            <p></p>
+            <p>{{info.pratice_inspector_name || '-'}}</p>
           </li>
           <li>
             <span>备注：</span>
-            <p></p>
+            <p>{{info.remark || '-'}}</p>
           </li>
           <li>
             <span>是否专项安检：</span>
-            <p></p>
+            <p>{{info.is_special_inspect ? '是':'否'}}</p>
           </li>
           <li>
             <span>专项安检类型：</span>
-            <p></p>
+            <p>{{info.special_inspect_type }}</p>
           </li>
           <li>
             <span>通过专项安检：</span>
-            <p></p>
+            <p>{{info.is_passed ?'是':'否'}}</p>
           </li>
           <li>
             <span>船长姓名：</span>
-            <p></p>
+            <p>{{ '-'}}</p>
           </li>
-          <li>
+          <li v-if="tab === 1">
             <span>船长联系方式：</span>
-            <p></p>
+            <p>{{info.captain_phone || '-'}}</p>
           </li>
-          <li>
+          <li v-if="tab === 1">
             <span>船长证书号码：</span>
-            <p></p>
+            <p>{{info.captain_cert_no|| '-'}}</p>
           </li>
-          <li>
+          <li v-if="tab === 1">
             <span>优先等级：</span>
-            <p></p>
+            <p>{{info.priority_order|| '-'}}</p>
           </li>
-          <li>
+          <li v-if="tab === 1">
             <span>船舶风险属性：</span>
-            <p></p>
+            <p>{{info.risk_attribute|| '-'}}</p>
           </li>
-          <li>
+          <li v-if="tab === 1">
             <span>航次编码：</span>
-            <p></p>
+            <p>{{info.voyage_id || '-'}}</p>
           </li>
         </ul>
       </van-collapse-item>
     </van-collapse>
     <!-- 缺陷信息 -->
-    <van-collapse class="wrap" v-model="activeNames2">
+    <van-collapse v-if="tab === 1" class="wrap" v-model="activeNames2">
       <van-collapse-item title="缺陷信息" name="1">
         <ul class="defect-info">
-          <li>
-            <h1>2 法定证书文书配备及记录是否齐全</h1>
+          <li v-for="(item,index) in list" :key="'list'+index">
+            <h1>{{item.defect_code}} {{item.defect_desc}}</h1>
             <div class="list">
-              <span>检查结果：</span>
-              <p></p>
-            </div>
-            <div class="list">
-              <span>问题描述：</span>
-              <p></p>
+              <span>依据：</span>
+              <p>{{item.enforce_foundation|| '-'}}</p>
             </div>
             <div class="list">
               <span>处理决定：</span>
-              <p></p>
+              <p>{{item.comment_desc|| '-'}}</p>
+            </div>
+          </li>
+        </ul>
+      </van-collapse-item>
+    </van-collapse>
+
+    <van-collapse v-if="tab === 2" class="wrap" v-model="activeNames2">
+      <van-collapse-item title="检查内容" name="1">
+        <ul class="defect-info">
+          <li v-for="(item,index) in list" :key="'list'+index">
+            <h1>{{item.seq_no}} {{item.content_desc}}</h1>
+            <div class="list">
+              <span>检查结果：</span>
+              <p>{{item.enforce_foundation|| '-'}}</p>
+            </div>
+            <div class="list">
+              <span>问题描述：</span>
+              <p>{{item.description|| '-'}}</p>
+            </div>
+            <div class="list">
+              <span>处理决定：</span>
+              <p>{{item.comment_desc|| '-'}}</p>
             </div>
           </li>
         </ul>
@@ -149,13 +163,22 @@
 
 <script>
 export default {
+  name: 'checkReportDetail',
   data () {
     return {
       activeNames1: [],
       activeNames2: [],
-      siteSupervisionDetail: {}, //检查信息
-      siteSupervisionDetailList: [] //缺陷
+      info: {},
+      list: [],
+      tab: 1
     }
+  },
+  created () {
+    console.log(777555, this.$route.params)
+    let { activeTab, info, list } = this.$route.params
+    this.tab = activeTab
+    this.info = info
+    this.list = list
   },
   mounted () {
 
@@ -163,12 +186,13 @@ export default {
 }
 </script>
 
-<style scope lang="less">
+<style scoped lang="less">
 .container {
   width: 100vw;
   min-height: 100vh;
   overflow: hidden;
   background: #efeff4;
+  padding-bottom: 20px;
   .top {
     width: 718px;
     background: #fff;
@@ -188,14 +212,17 @@ export default {
       > li {
         display: flex;
         line-height: 45px;
+        font-size: 30px;
         > span {
           color: #808080;
+          display: inline-block;
+          width: 200px;
         }
       }
     }
   }
 
-  .wrap {
+  /deep/ .wrap {
     width: 717px;
     margin: 20px auto 0;
     overflow: hidden;
@@ -207,6 +234,7 @@ export default {
       .van-cell__title {
         display: flex;
         align-items: center;
+        font-size: 18px;
       }
       .van-icon {
         display: flex;
@@ -221,6 +249,7 @@ export default {
     > li {
       line-height: 55px;
       font-size: 30px;
+      display: flex;
       > span {
         display: block;
         color: #808080;
@@ -228,6 +257,7 @@ export default {
       }
       > p {
         color: #404040;
+        flex: 1;
       }
     }
   }
@@ -240,8 +270,10 @@ export default {
         font-size: 36px;
         font-weight: 400;
         color: #404040;
+        margin-top: 10px;
       }
       .list {
+        display: flex;
         font-size: 30px;
         line-height: 50px;
       }
