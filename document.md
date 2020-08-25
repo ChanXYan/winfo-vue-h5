@@ -12,3 +12,7 @@ yarn add lib-flexible -D
 // UI框架
 yarn add vant
 ```
+
+
+#### 处理跨域问题
+https://www.cnblogs.com/xudaxian/p/12610463.html
