@@ -4,8 +4,8 @@
   </div>
 </template>
 
-<style lang="scss">
-@import url('./assets/style/reset.less');
+<style lang="less">
+@import url("./assets/style/common.less");
 
 #app {
   font-family: PingFang SC, Avenir, Helvetica, Arial, sans-serif;

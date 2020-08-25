@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -9,13 +10,18 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home
+  },
+  {
+    path: "/checkReportDetail",
+    name: "报告查询详情",
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/checkReport/checkReportDetail.vue')
+  }, {
+    path: "/checkReportSearch",
+    name: "报告查询",
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/checkReport/checkReportSearch.vue')
   }
-  // {
-  //   path: "/about",
-  //   name: "About",
-  //   component: () =>
-  //     import(/* webpackChunkName: "about" */ "../views/About.vue")
-  // }
 ]
 
 const router = new VueRouter({
