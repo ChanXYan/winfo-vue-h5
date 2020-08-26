@@ -73,8 +73,6 @@
             </div>
           </div>
         </div>
-
-        <div class="pdfBtn"></div>
       </div>
     </div>
 
@@ -215,11 +213,17 @@ export default {
           },
           list: item.siteSupervisionDetailList
         }
+
+      // 存储路径参数
+      this.ls.set('routeParams', params)
+
+      console.log(999, window.ls.get('routeParams'))
+
       this.$router.push({
         name: 'checkReportDetail',
-        params: {
-          ...params
-        }
+        // params: {
+        //   ...params
+        // }
       })
     },
     deleteHistoryApi () {
@@ -412,14 +416,6 @@ export default {
           color: #888;
         }
       }
-    }
-
-    .pdfBtn {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
     }
   }
 }

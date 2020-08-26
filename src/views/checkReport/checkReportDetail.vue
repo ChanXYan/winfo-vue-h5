@@ -162,6 +162,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'checkReportDetail',
   data () {
@@ -174,15 +175,23 @@ export default {
     }
   },
   created () {
-    console.log(777555, this.$route.params)
-    let { activeTab, info, list } = this.$route.params
-    this.tab = activeTab
-    this.info = info
-    this.list = list
+    this.init()
+  },
+  activated () {
+    this.init()
   },
   mounted () {
 
   },
+  methods: {
+    init () {
+      let { activeTab, info, list } = this.ls.get('routeParams')
+
+      this.tab = activeTab
+      this.info = info
+      this.list = list
+    }
+  }
 }
 </script>
 

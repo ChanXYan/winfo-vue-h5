@@ -1,7 +1,8 @@
 <template>
   <div class="no-data">
     <div>
-      <img src="../assets/imgs/no-data.png" alt />
+      <img v-lazy="require('../assets/imgs/no-data.png')" alt />
+      <!-- <img src="../assets/imgs/no-data.png" alt /> -->
     </div>
     <p>{{msg}}</p>
   </div>
