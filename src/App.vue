@@ -1,8 +1,20 @@
 <template>
   <div id="app">
-    <router-view />
+    <keep-alive>
+      <router-view :key="$router.fullPath" />
+    </keep-alive>
   </div>
 </template>
+
+<script>
+export default {
+  data () {
+    return {
+
+    }
+  }
+}
+</script>
 
 <style lang="less">
 @import url("./assets/style/common.less");

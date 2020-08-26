@@ -33,4 +33,27 @@ const router = new VueRouter({
   routes
 })
 
+router.beforeEach((to, from, next) => {
+  // debugger
+  window.document.title = to.meta.title === undefined ? 'Winfo H5' : to.meta.title
+  if (to.path !== from.path) {
+    // NProgress.start() //进度条加载
+  }
+
+  // 处理keepAlive页面缓存的 副作用
+  let toDepth = to.path.split('/').length
+  let fromDepth = from.path.split('/').length
+  if (toDepth < fromDepth) {
+    // console.log('back...')
+    from.meta.keepAlive = false
+    to.meta.keepAlive = true
+  }
+
+  next()
+})
+
+router.afterEach(() => {
+  // NProgress.done() //进度条结束
+})
+
 export default router
