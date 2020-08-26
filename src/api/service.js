@@ -4,7 +4,7 @@ import { baseUrl } from './config'
 
 let alertInstance = null
 
-axios.defaults.timeout = 5000 //普遍接口超时时间 设置为10s
+axios.defaults.timeout = 10000 //普遍接口超时时间 设置为10s
 
 axios.interceptors.request.use(
   (config) => {
@@ -12,6 +12,7 @@ axios.interceptors.request.use(
     //   ? 'Bearer ' + window.ls.get('token')
     //   : ''
 
+    console.log(config)
 
     if (config.headers['delToken']) {
       delete config.headers['Authorization']
@@ -42,35 +43,31 @@ axios.interceptors.response.use(
       case 0:
         // msg = '没有查询到数据'
         break
-      case 500:
+      case -1:
         msg = '服务器异常'
         break
-      case 200:
+      case 10000:
         //操作成功
         break
-      case 401:
+      case 10008:
         msg = 'token过期'
         break
-      case 403:
-        msg = '权限不足'
+      case 500:
+        msg = 'token过期'
         break
-      case 404:
-        msg = '参数检验失败'
-
       default:
     }
 
     return response.data
   },
   (error) => {
-    console.log(999, error, error.response, error.message,)
-    // debugger
+    debugger
     window.hideToast && window.hideToast()
     let res = {
       code: 500,
       msg: '服务器异常'
     }
-    if (error.message === `timeout of ${axios.defaults.timeout}ms exceeded`) {
+    if (error.message.includes('timeout')) {
       res = {
         code: 500,
         msg: '请求超时，请稍后再试！'
@@ -78,14 +75,14 @@ axios.interceptors.response.use(
       return res
     }
 
-    if (error.response && error.response.status) {
-      let status = error.response.status
-      switch (status) {
-        case 401:
-          break
-        default:
-      }
-    }
+    // if (error.response && error.response.status) {
+    //   let status = error.response.status
+    //   switch (status) {
+    //     case 401:
+    //       break
+    //     default:
+    //   }
+    // }
     return res
   }
 )

@@ -24,11 +24,11 @@
         <ul class="content">
           <li>
             <span>检查日期：</span>
-            <p>{{info.inspector_date ||'-'}}</p>
+            <p>{{info.inspect_date ||'-'}}</p>
           </li>
           <li>
             <span>检查机构：</span>
-            <p>{{info.comment_code|| '-'}}</p>
+            <p>{{info.orgName|| '-'}}</p>
           </li>
           <li>
             <span>安检类型：</span>

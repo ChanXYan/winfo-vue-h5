@@ -161,8 +161,8 @@ export default {
     },
     fscApi (params) {
       api.flagStateControlQuery(params).then(res => {
-        if (res.code === 200) {
-          this.fscList = res.data.map(item => {
+        if (res.code === 10000) {
+          this.fscList = res.datas.map(item => {
             let { flagStateControl, flagStateControlDetail, flagStateControlDetailList } = item
             return { ...flagStateControl, flagStateControlDetail, flagStateControlDetailList }
           })
@@ -174,8 +174,8 @@ export default {
     siteApi (params) {
 
       api.siteSupervisionQuery(params).then(res => {
-        if (res.code === 200) {
-          this.siteList = res.data.map(item => {
+        if (res.code === 10000) {
+          this.siteList = res.datas.map(item => {
             let { siteSupervisionDetail, siteSupervisionDetailList, siteSupervisionReport } = item
             return { ...siteSupervisionReport, siteSupervisionDetail, siteSupervisionDetailList }
           })
@@ -186,8 +186,8 @@ export default {
     },
     searchHistory () {
       api.searchHistory().then(res => {
-        if (res.code === 200) {
-          this.historyList = res.data
+        if (res.code === 10000) {
+          this.historyList = res.datas
         } else {
           this.toast(res.msg)
         }
@@ -228,7 +228,7 @@ export default {
     },
     deleteHistoryApi () {
       api.deleteHistory().then(res => {
-        if (res.code === 200) {
+        if (res.code === 10000) {
           this.toast('已清空')
           this.historyList = []
         } else {
