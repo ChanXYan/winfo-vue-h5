@@ -14,6 +14,9 @@ const preUrl = process.env.VUE_APP_API_PREFIX
 Mock.mock(`${preUrl}sz-mini-program/nationReport/siteSupervisionQuery`,
   mockSuccess(checkReport.siteSupervisionQuery()))
 
+Mock.mock(`${preUrl}sz-mini-program/nationReport/flagStateControlQuery`,
+  mockSuccess(checkReport.flagStateControlQuery()))
+
 
 
 
