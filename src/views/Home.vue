@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import api from '../api/index'
 export default {
   name: 'Home',
   data () {
@@ -15,7 +16,13 @@ export default {
   },
   components: {},
   mounted () {
+    // api.test({ a: 1, b: 13 }).then(res => {
+    //   console.log(7878, res)
+    // })
 
+    api.siteSupervisionQuery().then(res => {
+      console.log(555, res)
+    })
   }
 }
 </script>

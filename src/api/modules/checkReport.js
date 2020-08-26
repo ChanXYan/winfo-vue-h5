@@ -21,5 +21,7 @@ export default {
   deleteHistory () {
     return service.delete(`${preUrl}sz-mini-program/report/deleteHistory`)
   },
-
+  // test () {
+  //   return service.get(`${preUrl}/yyy/users`)
+  // }
 }
