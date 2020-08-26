@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import storage from './storage/storage'
+import VueLazyLoad from 'vue-lazyload'
 
 // vant 按需加载
 import './utils/vantImport'
@@ -13,8 +14,18 @@ import './rem'
 import './assets/fonts/iconfont.css'
 Vue.config.productionTip = false
 
+// 图片懒加载
+Vue.use(VueLazyLoad, {
+  // error: './static/error.png',
+  preLoad: 1.4,
+  attempt: 1,
+  error: '',
+  listenEvents: ['scroll'],
+  loading: './static/loading.png'
+})
+
 // 已经封装过的localStorage
-window.ls = new storage()
+Vue.prototype.ls = window.ls = new storage()
 
 new Vue({
   router,
