@@ -1,11 +1,10 @@
 /* eslint-disable*/
 import axios from 'axios'
-import { Toast } from 'vant'
 import { baseUrl } from './config'
 
 let alertInstance = null
 
-axios.defaults.timeout = 20000 //普遍接口超时时间 设置为10s
+axios.defaults.timeout = 5000 //普遍接口超时时间 设置为10s
 
 axios.interceptors.request.use(
   (config) => {
@@ -20,8 +19,8 @@ axios.interceptors.request.use(
     }
 
     if ((config.method === 'get' || config.method === 'delete') && config.loading) {
-      console.log(Toast)
-      // loading()
+
+
       window.loading && window.loading()
     }
 
@@ -36,7 +35,7 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   (response) => {
-
+    console.log(1, response)
     window.hideToast && window.hideToast()
     let msg = ''
     switch (response.data.code) {
@@ -64,20 +63,22 @@ axios.interceptors.response.use(
     return response.data
   },
   (error) => {
+    console.log(999, error, error.response, error.message,)
     // debugger
-    loaded()
+    window.hideToast && window.hideToast()
     let res = {
       code: 500,
       msg: '服务器异常'
     }
-    if (error.message === 'timeout of 10000ms exceeded') {
+    if (error.message === `timeout of ${axios.defaults.timeout}ms exceeded`) {
       res = {
-        code: status,
+        code: 500,
         msg: '请求超时，请稍后再试！'
       }
+      return res
     }
 
-    if (error.response) {
+    if (error.response && error.response.status) {
       let status = error.response.status
       switch (status) {
         case 401:
@@ -101,18 +102,19 @@ let instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    loading()
+
+    window.loading && window.loading()
     return config
   },
   (error) => Promise.reject(error)
 )
 instance.interceptors.response.use(
   (response) => {
-    loaded()
+    window.hideToast && window.hideToast()
     return response.data
   },
   (error) => {
-    loaded()
+    window.hideToast && window.hideToast()
     return {
       code: 500,
       msg: '请求超时'
@@ -120,14 +122,6 @@ instance.interceptors.response.use(
     Promise.reject(error)
   }
 )
-// 注： duration = 0 时，onClose 无效，toast 不会消失；隐藏 toast 需要手动调用 hide
-function loading (msg = '加载中', duration = 0, onClose, mask = true) {
-  Toast.loading(msg, duration, onClose, false)
-}
-
-function loaded () {
-  Toast.hide()
-}
 
 function toAuth (msg) {
   alertInstance = Alert(msg, '前往授权', [

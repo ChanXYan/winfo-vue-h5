@@ -1,11 +1,6 @@
-const env = process.env.NODE_ENV // 'development' production
 
-const apiUrlObj = {
-  development: 'https://m.winfo.pub/sz',
-  production: 'https://m.winfo.pub/sz'
-}
-const preUrl = '/api'
-const baseUrl = apiUrlObj[env] + preUrl
+const preUrl = process.env.VUE_APP_API_PREFIX
+const baseUrl = process.env.VUE_APP_SERVE_UR
 
 const downloadUrl =
   'https://m.winfo.pub/sz/service-ftp/ftp/downLoad?fileUuid='
