@@ -75,3 +75,37 @@ yarn add vue-lazyload -D
 | 是否根据接口参数，修改对应接口返回数据 | 不可                               | 可                                               |
 | 项目代码量                             | 增加（特别不适合放在小程序项目中） | 不增加                                           |
 
+#### 关于路由2种方式的调用
+
+##### hash
+默认是hash 访问路径中会带有#
+不需要做什么配置，可以直接放置服务器上调用
+
+如需要域名后面加前缀 
+只需要在 `index.html`
+加入 
+```
+<meta base="/h5/">
+```
+
+##### history
+路径是没有#的
+具体服务配置时需要注意的 参考[官方文档](https://router.vuejs.org/zh/guide/essentials/history-mode.html)
+
+前端需要做的配置 
+1. 在`vue.config.js`中配置
+```
+ publicPath: process.env.NODE_ENV === 'production' ? '/h5/' : '/',
+```
+
+2. 在路由中配置
+```
+const router = new VueRouter({
+  mode: 'history', 
+  base: process.env.BASE_URL, //加上这句
+  routes
+})
+
+```
+
+

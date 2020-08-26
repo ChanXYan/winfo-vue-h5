@@ -9,7 +9,7 @@ import VueLazyLoad from 'vue-lazyload'
 import './utils/vantImport'
 import 'lib-flexible/flexible' // px2rem适配
 import './rem'
-import './mock'
+// import './mock' // 打包时去掉
 
 //引入iconfont
 import './assets/fonts/iconfont.css'

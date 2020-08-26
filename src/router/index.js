@@ -18,18 +18,24 @@ const routes = [
     meta: { title: '报告查询详情' },
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/checkReport/checkReportDetail.vue')
-  }, {
+  },
+  {
     path: "/checkReportSearch",
     name: "checkReportSearch",
     meta: { title: '报告查询' },
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/checkReport/checkReportSearch.vue')
+  },
+  {
+    path: '*',
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../components/404.vue')
   }
 ]
 
 const router = new VueRouter({
-  // mode: 'history',
-  // base: process.env.BASE_URL,
+  mode: 'history', // 默认时hash 但是路径会有# 
+  base: process.env.BASE_URL,
   routes
 })
 
