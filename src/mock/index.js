@@ -2,6 +2,7 @@ import Mock from 'mockjs'
 import { mockSuccess } from './mockUtils'
 // import global from './modules/global'
 import checkReport from './modules/checkReport'
+import securityInformation from './modules/securityInformation'
 
 Mock.setup({
   timeout: '500'
@@ -17,6 +18,8 @@ Mock.mock(`${preUrl}sz-mini-program/nationReport/siteSupervisionQuery`,
 Mock.mock(`${preUrl}sz-mini-program/nationReport/flagStateControlQuery`,
   mockSuccess(checkReport.flagStateControlQuery()))
 
+Mock.mock(`${preUrl}sz-mini-program/sailNotice/queryOrg`,
+  mockSuccess(securityInformation.queryOrg()))
 
 
 
