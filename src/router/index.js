@@ -27,10 +27,43 @@ const routes = [
       import(/* webpackChunkName: "about" */ '../views/checkReport/checkReportSearch.vue')
   },
   {
+    path: "/airInfo",
+    name: "airInfo",
+    meta: { title: '气象信息' },
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/securityInformation/airInfo.vue')
+  },
+  {
+    path: "/airDetail",
+    name: "airDetail",
+    meta: { title: '气象详情' },
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/securityInformation/airDetail.vue')
+  },
+  {
+    path: "/navWarning/:type",
+    name: "navWarning",
+    meta: {
+      title: '航行警告',
+      keepAlive: false,
+    },
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/securityInformation/navWarning.vue')
+  },
+  {
+    path: "/navWarningDetail",
+    name: "navWarningDetail",
+    meta: { title: '航行警告详情' },
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/securityInformation/navWarningDetail.vue')
+  },
+
+  {
     path: '*',
     component: () =>
       import(/* webpackChunkName: "about" */ '../components/404.vue')
-  }
+  },
+
 ]
 
 const router = new VueRouter({

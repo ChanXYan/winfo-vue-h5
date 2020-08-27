@@ -9,7 +9,7 @@
           @click="clickTab(item)"
         >{{item.tab}}</div>
       </div>
-      <van-search v-model="keyword" shape="round" placeholder="请输入中英文船名或MMSI搜索" />
+      <van-search class="my-search" v-model="keyword" shape="round" placeholder="请输入中英文船名或MMSI搜索" />
       <van-calendar
         :min-date="new Date(2012, 0, 1)"
         v-model="showCalendar"
@@ -245,6 +245,14 @@ export default {
   width: 100vw;
   min-height: 100vh;
   background: #f5f8fa;
+  /deep/ .my-search {
+    width: 95vw;
+    height: 68px;
+    margin: 20px auto 30px;
+    border-radius: 68px;
+    padding: 0 10px;
+    background: #f0f4f5;
+  }
   .top {
     background: #fff;
   }
