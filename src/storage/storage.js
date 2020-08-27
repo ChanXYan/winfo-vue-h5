@@ -15,7 +15,7 @@ export default class Storage {
     this.source = this.props.source || window.localStorage
     this.initRun()
   }
-  initRun() {
+  initRun () {
     /*
      * set 存储方法
      * @ param {String}     key 键
@@ -39,7 +39,8 @@ export default class Storage {
     }
   }
 
-  set(key, value, expired) {
+  // 默认12小时缓存
+  set (key, value, expired = 1000 * 3600 * 12) {
     /*
      * set 存储方法
      * @ param {String}     key 键
@@ -54,7 +55,7 @@ export default class Storage {
     return value
   }
 
-  get(key) {
+  get (key) {
     /*
      * get 获取方法
      * @ param {String}     key 键
@@ -72,7 +73,7 @@ export default class Storage {
     return value
   }
 
-  remove(key) {
+  remove (key) {
     const data = this.source,
       value = data[key]
     delete data[key]
