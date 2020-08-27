@@ -19,14 +19,14 @@ axios.interceptors.request.use(
       delete config.headers['delToken']
     }
 
-    if ((config.method === 'get' || config.method === 'delete') && config.loading) {
+    if ((config.method === 'get' || config.method === 'delete') && config.$loading) {
 
 
-      window.loading && window.loading()
+      window.$loading && window.$loading()
     }
 
     if (config.method === 'post') {
-      config[0] && window.loading && window.loading()
+      config[0] && window.$loading && window.$loading()
     }
 
     return config
@@ -61,7 +61,7 @@ axios.interceptors.response.use(
     return response.data
   },
   (error) => {
-    debugger
+
     window.hideToast && window.hideToast()
     let res = {
       code: 500,
@@ -100,7 +100,7 @@ let instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
 
-    window.loading && window.loading()
+    window.$loading && window.$loading()
     return config
   },
   (error) => Promise.reject(error)
@@ -135,25 +135,25 @@ function toWeapp () {
 }
 
 export default {
-  get (url, params = {}, headers = {}, loading = true, config = {}) {
+  get (url, params = {}, headers = {}, $loading = true, config = {}) {
     return axios.get(url, {
       params,
       headers,
-      loading,
+      $loading,
       ...config
     })
   },
-  post (url, params = {}, headers = {}, loading = true) {
-    return axios.post(url, params, loading)
+  post (url, params = {}, headers = {}, $loading = true) {
+    return axios.post(url, params, $loading)
   },
-  delete (url, params = {}, headers = {}, loading = true) {
+  delete (url, params = {}, headers = {}, $loading = true) {
     return axios.delete(url, {
       params,
       headers,
-      loading,
+      $loading,
     })
   },
-  filePost (url, params = {}, headers = {}, loading = true) {
+  filePost (url, params = {}, headers = {}, $loading = true) {
     return instance.post(url, params)
   }
 }
