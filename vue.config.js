@@ -1,3 +1,4 @@
+const path = require('path')
 
 module.exports = {
   lintOnSave: false,
@@ -6,6 +7,7 @@ module.exports = {
   outputDir: 'dist',
   assetsDir: 'assets',
   indexPath: 'index.html',
+
   devServer: {
     proxy: {
       '/api': {
@@ -17,6 +19,7 @@ module.exports = {
       }
     }
   },
+
   configureWebpack: {
     performance: {
       hints: 'warning',
@@ -28,6 +31,14 @@ module.exports = {
       assetFilter: function (assetFilename) {
         return assetFilename.endsWith('.js');
       }
+    }
+  },
+  pluginOptions: {
+    'style-resources-loader': {
+      preProcessor: 'less',
+      patterns: [
+        path.resolve(__dirname, './src/assets/style/common.less')
+      ]
     }
   }
 }

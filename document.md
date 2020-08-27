@@ -109,3 +109,28 @@ const router = new VueRouter({
 ```
 
 
+
+关于全局less配置
+参考地址 https://www.jianshu.com/p/43d0637fe5e3
+
+前面我们已经在`App.vue`中引入了 common.less(包含了reset.less 和 variables.less)了,
+但是在`components`下使用并不能生效
+
+因此需要对less进行单独的webpack配置 使它能在components中调用
+
+```
+vue add style-resources-loader
+
+```
+// 选择less 将会在vue.config.js中生成如下代码
+
+```
+ pluginOptions: {
+    'style-resources-loader': {
+      preProcessor: 'less',
+      patterns: [
+        path.resolve(__dirname, './src/assets/style/common.less') // 这个地方自行配置
+      ]
+    }
+  }
+```
