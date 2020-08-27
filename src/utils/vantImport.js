@@ -2,7 +2,8 @@ import Vue from 'vue'
 import 'vant/lib/button/style'
 import {
   Button, Toast, Dialog, Lazyload, Search, Calendar,
-  Cell, CellGroup, Collapse, CollapseItem
+  Cell, CellGroup, Collapse, CollapseItem, Picker, Popup, List,
+  PullRefresh
 } from 'vant'
 
 Vue.use(Button)
@@ -11,9 +12,13 @@ Vue.use(Button)
   .use(Search)
   .use(Calendar)
   .use(Cell)
+  .use(List)
   .use(CellGroup)
   .use(Collapse)
   .use(CollapseItem)
+  .use(Picker)
+  .use(Popup)
+  .use(PullRefresh)
   .use(Lazyload, {
     lazyComponent: true
   })
@@ -65,7 +70,7 @@ Vue.prototype.toast = (msg = '', status = '', duration = 2000, icon = '') => {
  * @param {*}} duration
  * @param {*} forbidClick
  */
-Vue.prototype.loading = window.loading = (duration = 0, forbidClick = false) => {
+Vue.prototype.$loading = window.$loading = (duration = 0, forbidClick = false) => {
   Toast.loading({
     duration: duration, // 持续展示 toast
     forbidClick,
