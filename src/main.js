@@ -15,6 +15,9 @@ import './rem'
 import './assets/fonts/iconfont.css'
 Vue.config.productionTip = false
 
+// 引入wx sdk 配置
+// import setWechatConfig from './utils/setWechatConfig'
+// setWechatConfig()
 // 图片懒加载
 Vue.use(VueLazyLoad, {
   // error: './static/error.png',

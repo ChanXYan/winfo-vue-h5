@@ -9,7 +9,22 @@
     content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
 
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+
   <title><%= htmlWebpackPlugin.options.title %></title>
+  <!-- 跳转到小程序端需要引入的js -->
+  <script src="https://res2.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+  <script src="https://wechatfe.github.io/vconsole/lib/vconsole.min.js?v=3.3.0"></script>
+  <script>
+    // window.vConsole = VConsole
+
+    // if (process.env.NODE_ENV === 'development') {
+    new VConsole();
+    // }
+    //加载wx sdk
+    window.onload = function () {
+      window.wx = wx
+    }
+  </script>
 </head>
 
 <body>

@@ -251,6 +251,7 @@ export default {
     margin: 20px auto 30px;
     border-radius: 68px;
     padding: 0 10px;
+    font-size: 30px;
     background: #f0f4f5;
   }
   .top {

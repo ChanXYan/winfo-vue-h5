@@ -73,8 +73,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  // debugger
-  window.document.title = to.meta.title === undefined ? 'Winfo H5' : to.meta.title
+  document.title = to.meta.title === undefined ? 'Winfo H5' : to.meta.title
   if (to.path !== from.path) {
     // NProgress.start() //进度条加载
   }
