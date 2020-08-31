@@ -7,9 +7,6 @@
     <div class="content">
       <div v-html="content"></div>
     </div>
-    <div class="share">
-      <van-button class="btn" type="primary" @click="share">主要按钮</van-button>
-    </div>
   </div>
 </template>
 
@@ -29,34 +26,6 @@ export default {
   computed: {},
   watch: {},
   methods: {
-
-    share () {
-      let query = {
-        id: 123,
-        type: 'airInfo',
-      }
-      let url = '/packageD/airInfo/airInfo'
-
-
-      window.wx && window.wx.miniProgram.navigateTo({ url: `/packageD/shareH5/shareH5?url=${JSON.stringify(url)}&query=${JSON.stringify(query)}` })
-
-      // const callback = () => {
-      //   let wx = window.wx
-      //   wx.ready(function () {   //需在用户可能点击分享按钮前就先调用
-      //     wx.updateAppMessageShareData({
-      //       title: '气象信息', // 分享标题
-      //       desc: '气象信息描述', // 分享描述
-      //       link: 'https://m.winfo.pub/h5/airDetail', //'http://192.168.1.115:8080/airDetail', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-      //       imgUrl: require('../../assets/imgs/no-data.png'), // 分享图标
-      //       success: function () {
-      //         // 设置成功
-      //       }
-      //     })
-      //   });
-      // }
-      // setWechatConfig('https://m.winfo.pub/h5/airDetail', callback)
-
-    }
   },
   activated () {
 

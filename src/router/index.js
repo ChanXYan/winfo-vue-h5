@@ -57,7 +57,24 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/securityInformation/navWarningDetail.vue')
   },
-
+  {
+    path: "/test",
+    name: "test", //!!!!
+    meta: { title: '航行警告详情' },
+    component: () => import('../views/orgQuery/test.vue')
+  },
+  {
+    path: "/orgQuery",
+    name: "orgQuery",
+    meta: { title: '机构查询' },
+    component: () => import('../views/orgQuery/orgQuery.vue')
+  },
+  {
+    path: "/orgList",
+    name: "orgList",
+    meta: { title: '机构查询' },
+    component: () => import('../views/orgQuery/orgList.vue')
+  },
   {
     path: '*',
     component: () =>
@@ -81,6 +98,7 @@ router.beforeEach((to, from, next) => {
   // 处理keepAlive页面缓存的 副作用
   let toDepth = to.path.split('/').length
   let fromDepth = from.path.split('/').length
+
   if (toDepth < fromDepth) {
     // console.log('back...')
     from.meta.keepAlive = false
