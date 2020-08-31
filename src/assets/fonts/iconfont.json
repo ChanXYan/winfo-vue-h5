@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "16875292",
+      "name": "考生信息",
+      "font_class": "kaoshengxinxi",
+      "unicode": "e704",
+      "unicode_decimal": 59140
+    },
+    {
+      "icon_id": "16874957",
+      "name": "资质证书",
+      "font_class": "zizhizhengshu",
+      "unicode": "e703",
+      "unicode_decimal": 59139
+    },
+    {
+      "icon_id": "4767011",
+      "name": "right",
+      "font_class": "right",
+      "unicode": "e7ed",
+      "unicode_decimal": 59373
+    },
+    {
+      "icon_id": "4767093",
+      "name": "check",
+      "font_class": "check",
+      "unicode": "e7fc",
+      "unicode_decimal": 59388
+    },
+    {
+      "icon_id": "6598339",
+      "name": "caret-down",
+      "font_class": "caret-down",
+      "unicode": "e8ed",
+      "unicode_decimal": 59629
+    },
+    {
       "icon_id": "4766676",
       "name": "delete",
       "font_class": "delete",

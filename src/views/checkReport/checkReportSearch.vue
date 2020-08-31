@@ -221,9 +221,11 @@ export default {
 
       this.$router.push({
         name: 'checkReportDetail',
-        // params: {
-        //   ...params
-        // }
+        query: {
+          type: activeTab,
+          mmsi: item.mmsi,
+          endTime: item.inspect_date
+        }
       })
     },
     deleteHistoryApi () {
