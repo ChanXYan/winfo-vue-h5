@@ -11,6 +11,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
+        // target: "http://localhost:3333/h5/",
         target: "https://m.winfo.pub/sz/",
         changeOrigin: true,
         pathRewrite: {

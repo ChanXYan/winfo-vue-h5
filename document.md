@@ -166,3 +166,43 @@ B页面（需要对参数进行处理）传给S页面，S页面经过参数处�
 ```
 
 最后，选择第四种方式去处理这些问题。
+
+
+
+#### 小程序分享h5页面过程
+
+在h5要分享的页面，路径传参需根据query，查询具体数据信息
+在小程序中，需注意 编码和解码 分享的url路径，否则`?`以及`?`后面的内容将丢失。
+`
+//在小程序中
+  onShareAppMessage (options) {
+
+    // 注意路径中的url需要编码
+    return {
+      title: '报告查询',
+      path: `${this.$router.path}?url=${encodeURIComponent(options.webViewUrl)}`,
+      imageUrl: require("../imgs/share-img.png")
+    }
+  }
+
+  componentDidShow () {
+
+    let { url } = this.$router.params
+
+    url && this.setState({
+      url: decodeURIComponent(url) //解码
+    })
+
+
+  render () {
+      let { url } = this.state
+
+      return (
+        <View>
+          <WebView src={url || 'http://192.168.1.205:8080/checkReportSearch'}></WebView>
+        </View>
+      );
+    }
+  }
+
+`

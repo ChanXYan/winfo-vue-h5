@@ -162,7 +162,7 @@
 </template>
 
 <script>
-
+import api from '../../api'
 export default {
   name: 'checkReportDetail',
   data () {
@@ -175,21 +175,55 @@ export default {
     }
   },
   created () {
-    this.init()
+    // this.init()
   },
   activated () {
-    this.init()
+    // this.init()
+    let { mmsi, endTime, type } = this.$route.query
+    let params = {
+      keyword: mmsi,
+      endTime
+    }
+    if (+type === 1) {
+      this.fscDetailApi(params)
+    } else {
+      this.siteDetailApi(params)
+    }
+
   },
   mounted () {
 
   },
   methods: {
-    init () {
-      let { activeTab, info, list } = this.ls.get('routeParams')
+    // init () {
+    //   let { activeTab, info, list } = this.ls.get('routeParams')
 
-      this.tab = activeTab
-      this.info = info
-      this.list = list
+    //   this.tab = activeTab
+    //   this.info = info
+    //   this.list = list
+    // },
+    fscDetailApi (params) {
+
+      api.shareFlagStateControl(params).then(res => {
+        if (res.code === 10000) {
+          let { flagStateControl, flagStateControlDetailList } = res.datas
+          this.info = flagStateControl
+          this.list = flagStateControlDetailList
+        } else {
+          this.toast(res.msg)
+        }
+      })
+    },
+    siteDetailApi (params) {
+      api.shareSiteSupervision(params).then(res => {
+        if (res.code === 10000) {
+          let { siteSupervisionDetailList, siteSupervisionReport } = res.datas
+          this.info = siteSupervisionReport
+          this.list = siteSupervisionDetailList
+        } else {
+          this.toast(res.msg)
+        }
+      })
     }
   }
 }

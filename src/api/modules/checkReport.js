@@ -24,6 +24,16 @@ export default {
   deleteHistory () {
     return service.delete(`${preUrl}sz-mini-program/report/deleteHistory`)
   },
+  shareFlagStateControl (data) {
+    return service.get(`${preUrl}sz-mini-program/nationReport/shareFlagStateControl`, data, {}, true, {
+      timeout: 60000
+    })
+  },
+  shareSiteSupervision (data) {
+    return service.get(`${preUrl}sz-mini-program/nationReport/shareSiteSupervision`, data, {}, true, {
+      timeout: 60000
+    })
+  }
   // test () {
   //   return service.get(`${preUrl}/yyy/users`)
   // }
