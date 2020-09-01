@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "16889487",
+      "name": "机构",
+      "font_class": "jigou",
+      "unicode": "e705",
+      "unicode_decimal": 59141
+    },
+    {
       "icon_id": "16875292",
       "name": "考生信息",
       "font_class": "kaoshengxinxi",
