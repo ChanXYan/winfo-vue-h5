@@ -1,4 +1,4 @@
-<!-- 机构查询列表 -->
+<!-- 免考生详情 -->
 <template>
   <div class="container">
     <div class="list">
@@ -7,12 +7,12 @@
         <div class="content">
           <div class="left">
             <div class="item mb20">
-              <span>联系人：</span>
-              <div class="value">{{item.person}}</div>
+              <span>身份证号：</span>
+              <div class="value">{{item.idcard}}</div>
             </div>
             <div class="item">
-              <span>联系电话：</span>
-              <div class="value">{{item.phone}}</div>
+              <span>报考等级：</span>
+              <div class="value">{{item.level}}</div>
             </div>
           </div>
           <div class="right">详情</div>
@@ -34,17 +34,17 @@ export default {
     return {
       showDetail: false,
       list: [{
-        title: '深圳中海船员管理有限公司',
-        person: '李管理',
-        phone: '13520312412',
+        title: '韦日利',
+        idcard: '4502****1610',
+        level: 'A',
       }, {
-        title: '深圳中海船员管理有限公司',
-        person: '李管理',
-        phone: '13520312412',
+        title: '韦日利',
+        person: '4502****1610',
+        phone: 'B',
       }, {
-        title: '深圳中海船员管理有限公司',
-        person: '李管理',
-        phone: '13520312412',
+        title: '韦日利',
+        person: '4502****1610',
+        phone: 'B',
       }]
     };
   },

@@ -76,6 +76,30 @@ const routes = [
     component: () => import('../views/orgQuery/orgList.vue')
   },
   {
+    path: "/qualifyQuery",
+    name: "qualifyQuery",
+    meta: { title: '资质查询' },
+    component: () => import('../views/qualifyQuery/index.vue')
+  },
+  {
+    path: "/showPdf",
+    name: "showPdf",
+    meta: { title: '资质查询' },
+    component: () => import('../views/qualifyQuery/showPdf.vue')
+  },
+  {
+    path: "/examineeDetail",
+    name: "examineeDetail",
+    meta: { title: '免考考生查询' },
+    component: () => import('../views/qualifyQuery/examineeDetail.vue')
+  },
+  {
+    path: "/crewCertificate",
+    name: "crewCertificate",
+    meta: { title: '船员证书' },
+    component: () => import('../views/qualifyQuery/crewCertificate.vue')
+  },
+  {
     path: '*',
     component: () =>
       import(/* webpackChunkName: "about" */ '../components/404.vue')

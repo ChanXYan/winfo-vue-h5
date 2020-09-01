@@ -4,10 +4,11 @@ import {
   Button, Toast, Dialog, Lazyload, Search, Calendar,
   Cell, CellGroup, Collapse, CollapseItem, Picker, Popup, List,
   PullRefresh, DropdownMenu, DropdownItem, Tab, Tabs, Divider,
-  Field, Overlay,
+  Field, Overlay, Icon
 } from 'vant'
 
 Vue.use(Button)
+  .use(Icon)
   .use(Toast)
   .use(Dialog)
   .use(Search)

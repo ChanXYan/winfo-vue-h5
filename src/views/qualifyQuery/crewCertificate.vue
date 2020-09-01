@@ -1,51 +1,97 @@
-<!-- 机构查询列表 -->
+<!-- 免考生详情 -->
 <template>
   <div class="container">
     <div class="list">
-      <div v-for="(item,index) in list" :key="'item'+index" @click="clickItem(item)" class="item">
+      <van-divider
+        class="line"
+        :style="{ color: '#B2B2B2', borderColor: '#DBDBDB', padding: '0 16px' }"
+      >合格证</van-divider>
+      <div
+        v-for="(item,index) in info.hgz"
+        :key="'hgz'+index"
+        @click="clickItem(item)"
+        class="item"
+      >
         <div class="top">{{item.title}}</div>
         <div class="content">
           <div class="left">
             <div class="item mb20">
-              <span>联系人：</span>
-              <div class="value">{{item.person}}</div>
+              <span>姓名：</span>
+              <div class="value">{{item.idcard}}</div>
             </div>
             <div class="item">
-              <span>联系电话：</span>
-              <div class="value">{{item.phone}}</div>
+              <span>身份证号码：</span>
+              <div class="value">{{item.level}}</div>
+            </div>
+          </div>
+          <div class="right">详情</div>
+        </div>
+      </div>
+      <van-divider
+        class="line"
+        :style="{ color: '#B2B2B2', borderColor: '#DBDBDB', padding: '0 16px',marginTop:'-10px' }"
+      >合格证项目</van-divider>
+      <div
+        v-for="(item,index) in info.hgzxm"
+        :key="'item'+index"
+        @click="clickItem(item)"
+        class="item"
+      >
+        <div class="top">{{item.title}}</div>
+        <div class="content">
+          <div class="left">
+            <div class="item mb20">
+              <span>签发机关：</span>
+              <div class="value">{{item.idcard}}</div>
+            </div>
+            <div class="item">
+              <span>签发日期：</span>
+              <div class="value">{{item.level}}</div>
             </div>
           </div>
           <div class="right">详情</div>
         </div>
       </div>
     </div>
-    <alertDetail :show="showDetail" @close="showDetail=false"></alertDetail>
+    <alertDetail :type="7" :show="showDetail" @close="showDetail=false"></alertDetail>
   </div>
 </template>
 
 <script>
 import alertDetail from '../../components/orgQuery/alertDetail'
+
 export default {
   components: {
-    alertDetail
+    alertDetail,
   },
   data () {
     //这里存放数据
     return {
       showDetail: false,
-      list: [{
-        title: '深圳中海船员管理有限公司',
-        person: '李管理',
-        phone: '13520312412',
-      }, {
-        title: '深圳中海船员管理有限公司',
-        person: '李管理',
-        phone: '13520312412',
-      }, {
-        title: '深圳中海船员管理有限公司',
-        person: '李管理',
-        phone: '13520312412',
-      }]
+      info: {
+        hgz: [{
+          title: 'PKB201501626',
+          name: '4502****1610',
+          idcard: 'A',
+        }, {
+          title: 'PKB201501626',
+          name: '4502****1610',
+          idcard: 'B',
+        }, {
+          title: 'PKB201501626',
+          name: '4502****1610',
+          idcard: 'B',
+        }],
+        hgzxm: [{
+          title: 'PKB201501626',
+          name: '4502****1610',
+          idcard: 'A',
+        }, {
+          title: '精通救生艇筏和救助艇培训',
+          org: '深圳海事局',
+          time: '2020-03-18',
+        }]
+      }
     };
   },
   computed: {},
@@ -78,6 +124,11 @@ export default {
 </script>
 <style lang='less' scoped>
 .container {
+  background: #f5f8fa;
+  overflow: hidden;
+  .line {
+    font-size: 24px;
+  }
   .list {
     padding: 0 15px;
     > .item {
@@ -87,7 +138,7 @@ export default {
       background: #ffffff;
       box-shadow: 0px 2px 8px 0px rgba(5, 60, 113, 0.2);
       border-radius: 8px;
-      margin-top: 30px;
+      margin-bottom: 30px;
       .top {
         line-height: 94px;
         font-size: 36px;

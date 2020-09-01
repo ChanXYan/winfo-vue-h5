@@ -9,6 +9,8 @@
     <van-popup v-model="show" position="bottom">
       <van-picker title show-toolbar :columns="columns" @confirm="onConfirm" @cancel="show=false" />
     </van-popup>
+
+    <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }">文字</van-divider>
   </div>
 </template>
 
