@@ -2,7 +2,7 @@ import Vue from 'vue'
 import 'vant/lib/button/style'
 import {
   Button, Toast, Dialog, Lazyload, Search, Calendar,
-  Cell, CellGroup, Collapse, CollapseItem, Picker, Popup, List,
+  Cell, CellGroup, Collapse, CollapseItem, Checkbox, CheckboxGroup, Picker, Popup, List,
   PullRefresh, DropdownMenu, DropdownItem, Tab, Tabs, Divider,
   Field, Overlay, Icon
 } from 'vant'
@@ -18,6 +18,8 @@ Vue.use(Button)
   .use(CellGroup)
   .use(Collapse)
   .use(CollapseItem)
+  .use(Checkbox)
+  .use(CheckboxGroup)
   .use(Picker)
   .use(Popup)
   .use(PullRefresh)

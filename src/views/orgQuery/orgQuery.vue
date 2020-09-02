@@ -17,60 +17,211 @@
         </div>
         <div class="item">
           <span>许可资质</span>
-          <div class="value" @click="show= true">
-            {{keyword ||'请选择'}}
+          <div class="value" @click="showQualification= true">
+            {{param[0].qualification ||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
         <div class="item">
           <span>所在省份</span>
           <div class="value" @click="showProvince= true">
-            {{keyword ||'请选择'}}
+            {{param[0].province ||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
 
         <div class="item">
-          <div class="value"></div>
+          <span>请输入验证码</span>
+          <div class="value verif">
+            <van-field v-model="param[0].verif" />
+            <img class="verif-img" src="../../assets/imgs/code.jpg" />
+          </div>
         </div>
       </div>
-      <van-button class="query-btn" type="primary">查询</van-button>
+      <van-button class="query-btn" type="primary" @click="queryData(active)">查询</van-button>
     </div>
 
-    <div v-if="active === 1" class="content">2</div>
-    <div v-if="active === 2" class="content">3</div>
+    <div v-if="active === 1" class="content">
+      <div class="list">
+        <div class="item">
+          <span>体检机构名称</span>
+          <div class="value">
+            <van-field maxlength="30" v-model="param[1].org" placeholder="请输入机构名称" />
+          </div>
+        </div>
+        <div class="item">
+          <span>有效标志</span>
+          <div class="value checkbox">
+            <van-checkbox v-model="param[1].validFlag">有效</van-checkbox>
+          </div>
+        </div>
+        <div class="item">
+          <span>单位所在省份</span>
+          <div class="value" @click="showProvince= true">
+            {{param[1].province ||'请选择'}}
+            <span class="iconfont icondown ml10"></span>
+          </div>
+        </div>
+        <div class="item">
+          <span>辖区</span>
+          <div class="value" @click="showJurisdiction= true">
+            {{param[1].jurisdiction ||'请选择'}}
+            <span class="iconfont icondown ml10"></span>
+          </div>
+        </div>
+
+        <div class="item">
+          <span>一检两证</span>
+          <div class="value checkbox">
+            <van-checkbox v-model="param[1].openTwo">开启</van-checkbox>
+          </div>
+        </div>
+
+        <div class="item">
+          <span>请输入验证码</span>
+          <div class="value verif">
+            <van-field v-model="param[1].verif" />
+            <img class="verif-img" src="../../assets/imgs/code.jpg" />
+          </div>
+        </div>
+      </div>
+      <van-button class="query-btn" type="primary" @click="queryData(active)">查询</van-button>
+    </div>
+
+    <div v-if="active === 2" class="content">
+      <div class="list">
+        <div class="item">
+          <span>培训机构名称</span>
+          <div class="value">
+            <van-field v-model="param[2].org" placeholder="请输入机构名称" />
+          </div>
+        </div>
+        <div class="item">
+          <span>培训项目名称</span>
+          <div class="value" @click="showTraining= true">
+            {{param[2].training ||'请选择'}}
+            <span class="iconfont icondown ml10"></span>
+          </div>
+        </div>
+        <div class="item">
+          <span>所在省份</span>
+          <div class="value" @click="showProvince= true">
+            {{param[2].province ||'请选择'}}
+            <span class="iconfont icondown ml10"></span>
+          </div>
+        </div>
+
+        <div class="item">
+          <span>请输入验证码</span>
+          <div class="value verif">
+            <van-field v-model="param[2].verif" />
+            <img class="verif-img" src="../../assets/imgs/code.jpg" />
+          </div>
+        </div>
+      </div>
+      <van-button class="query-btn" type="primary" @click="queryData(active)">查询</van-button>
+    </div>
+
     <!-- 资质picker -->
-    <van-popup v-model="show" position="bottom">
-      <van-picker title show-toolbar :columns="columns" @confirm="onConfirm" @cancel="show=false" />
+    <van-popup v-model="showQualification" position="bottom">
+      <van-picker
+        title
+        show-toolbar
+        :columns="qualificationList"
+        @confirm="onConfirmshowQualification"
+        @cancel="showQualification=false"
+      />
     </van-popup>
     <!-- 省份 -->
+    <van-popup v-model="showProvince" position="bottom">
+      <van-picker
+        title
+        show-toolbar
+        :columns="provinceList"
+        @confirm="onConfirmProvince"
+        @cancel="showProvince=false"
+      />
+    </van-popup>
+    <!-- 辖区 -->
+    <van-popup v-model="showJurisdiction" position="bottom">
+      <van-picker
+        title
+        show-toolbar
+        :columns="jurisdictionList"
+        @confirm="onConfirmJurisdiction"
+        @cancel="showJurisdiction=false"
+      />
+    </van-popup>
+    <!-- 培训项目 -->
+    <van-popup v-model="showTraining" position="bottom">
+      <van-picker
+        title
+        show-toolbar
+        :columns="trainingList"
+        @confirm="onConfirmTraining"
+        @cancel="showTraining=false"
+      />
+    </van-popup>
   </div>
 </template>
 
 <script>
 
 export default {
+  name: 'OrgQueryPage',
   components: {
   },
   data () {
-    //这里存放数据
     return {
       active: 0,
       show: false,
-      showProvince: false,
       loading: false,
       finished: false,
+      param: [{
+        qualification: ''
+      }, {
+        // 体检机构
+        validFlag: true,
+        openTwo: false,
+        province: '',
+        jurisdiction: ''
+      }, {
+        training: ''
+      }],
       org: '',
       keyword: '',
       orgNameObj: {},
-      columns: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'], //picker数组
-
+      // picker数组
+      showQualification: false,
+      qualificationList: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
+      showProvince: false,
+      provinceList: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
+      showJurisdiction: false,
+      jurisdictionList: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
+      showTraining: false,
+      trainingList: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
     };
   },
   computed: {},
   methods: {
-    onConfirm () {
-
+    onConfirmshowQualification (value) {
+      this.param[0].qualification = value
+      this.showQualification = false
+    },
+    onConfirmProvince (value) {
+      this.param[this.active].province = value
+      this.showProvince = false
+    },
+    onConfirmJurisdiction (value) {
+      this.param[1].jurisdiction = value
+      this.showJurisdiction = false
+    },
+    onConfirmTraining (value) {
+      this.param[2].training = value
+      this.showTraining = false
+    },
+    queryData (type) {
+      console.log(type);
     }
 
 
@@ -119,6 +270,21 @@ export default {
           line-height: 88px;
           text-align: right;
           flex: 1;
+
+          &.checkbox {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+          }
+
+          &.verif {
+            display: flex;
+            .verif-img {
+              width: 189px;
+              height: 68px;
+              align-self: center;
+            }
+          }
         }
       }
     }
