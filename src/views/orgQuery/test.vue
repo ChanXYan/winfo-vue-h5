@@ -11,10 +11,10 @@
       {{values1}}
     </div>
 
-    <!-- <div class="mt30">
+    <div class="mt30">
       <button @click="show3 =!show3">显示一维单选</button>
       {{values2}}
-    </div>-->
+    </div>
     <queryPicker
       :show="show1"
       :type="3"
@@ -31,7 +31,95 @@
       @close="show2=false"
       @onComfirm="onComfirm2"
     ></queryPicker>
-    <!-- <queryPicker :show="show3" :type="1" :list="list3" :values="values2" @close="show3=false"></queryPicker> -->
+    <queryPicker :show="show3" :type="1" :list="list3" :values="values2" @close="show3=false"></queryPicker>
+
+    <div>
+      1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />1
+      <br />
+    </div>
   </div>
 </template>
 
@@ -42,7 +130,6 @@ export default {
     queryPicker
   },
   data () {
-    //这里存放数据
     return {
       show1: false,
       show2: false,
@@ -133,42 +220,6 @@ export default {
         }, {
           label: '船舶辅机',
           value: 6
-        }, {
-          label: '航海英语',
-          value: 1
-        }, {
-          label: '船舶操纵与避碰',
-          value: 2
-        }, {
-          label: '航海学',
-          value: 3
-        }, {
-          label: '船舶管理（驾驶）',
-          value: 4
-        }, {
-          label: '船舶结构与货运',
-          value: 5
-        }, {
-          label: '船舶辅机',
-          value: 6
-        }, {
-          label: '航海英语',
-          value: 1
-        }, {
-          label: '船舶操纵与避碰',
-          value: 2
-        }, {
-          label: '航海学',
-          value: 3
-        }, {
-          label: '船舶管理（驾驶）',
-          value: 4
-        }, {
-          label: '船舶结构与货运',
-          value: 5
-        }, {
-          label: '船舶辅机',
-          value: 6
         }
       ]
     };
@@ -180,7 +231,8 @@ export default {
     },
     onComfirm2 (o) {
       this.values1 = [...o]
-    }
+    },
+
   },
   created () {
 

@@ -1,64 +1,84 @@
 <!-- picker 查询弹窗封装 -->
 <template>
-  <van-overlay :show="show" @click="onclose">
-    <div class="query-picker" @click.stop>
-      <div class="wrapper-box">
-        <div class="btns">
-          <div class="cancel" @click="onclose">取消</div>
-          <div class="sure" @click="onComfirm">确定</div>
-        </div>
+  <div class="query-picker">
+    <van-overlay v-show="(type==2 || type===3) && show" @click="onclose">
+      <div>
+        <div @click.stop>
+          <div class="wrapper-box">
+            <div class="btns">
+              <div class="cancel" @click="onclose">取消</div>
+              <div class="sure" @click="onComfirm">确定</div>
+            </div>
 
-        <div v-if="type===1">
-          <van-search class="my-search" v-model="keyword" shape="round" placeholder="请输入关键字" />
-          <div class="listWrap">
-            <div class="list">
-              <div
-                v-for="(item,index) in list"
-                :key="'item'+index"
-                class="item"
-                @click="clickItem(item)"
-              >
-                <p>{{item.label}}</p>
-                <span v-if="picks.includes(item.value)" class="iconfont iconcheck"></span>
+            <div v-if="type===2">
+              <div class="lists">
+                <div class="list" v-for="(item,index) in list" :key="'item'+index">
+                  <p>{{item.title}}</p>
+                  <div
+                    v-for="(o,index) in item.list"
+                    :key="'o'+index"
+                    class="item"
+                    @click="clickItem(o)"
+                  >
+                    <p>{{o.label}}</p>
+                    <span v-if="picks.includes(o.value)" class="iconfont iconcheck"></span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div v-if="type===2">
-          <!-- <van-search class="my-search" v-model="keyword" shape="round" placeholder="请输入关键字" /> -->
-          <div class="lists">
-            <div class="list" v-for="(item,index) in list" :key="'item'+index">
-              <p>{{item.title}}</p>
-              <div
-                v-for="(o,index) in item.list"
-                :key="'o'+index"
-                class="item"
-                @click="clickItem(o)"
-              >
-                <p>{{o.label}}</p>
-                <span v-if="picks.includes(o.value)" class="iconfont iconcheck"></span>
+            <div v-if="type===3">
+              <div class="list">
+                <div
+                  v-for="(item,index) in list"
+                  :key="'item'+index"
+                  class="item"
+                  @click="clickItem(item)"
+                >
+                  <p>{{item.label}}</p>
+                  <span v-if="picks.includes(item.value)" class="iconfont iconcheck"></span>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="type===3">
-          <div class="list">
-            <div
-              v-for="(item,index) in list"
-              :key="'item'+index"
-              class="item"
-              @click="clickItem(item)"
-            >
-              <p>{{item.label}}</p>
-              <span v-if="picks.includes(item.value)" class="iconfont iconcheck"></span>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </van-overlay>
+    </van-overlay>
+
+    <section class="wmassageMask" v-show="(type === 1)&&show" @click="eventMask($event)">
+      <div class="mask" ref="msk">
+        <div v-if="type===1">
+          <div class="wrapper-box">
+            <div class="btns">
+              <div class="cancel" @click="onclose">取消</div>
+              <div class="sure" @click="onComfirm">确定</div>
+            </div>
+            <van-search
+              class="my-search"
+              v-model="keyword"
+              shape="round"
+              placeholder="请输入关键字"
+              @search="onsearch"
+              @clear="onclear"
+            />
+            <div class="listWrap">
+              <div class="list" style="overflow:auto;">
+                <div
+                  v-for="(item,index) in result"
+                  :key="'item'+index"
+                  class="item"
+                  @click="clickItem(item)"
+                >
+                  <p>{{item.label}}</p>
+                  <span v-if="picks.includes(item.value)" class="iconfont iconcheck"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script>
@@ -70,11 +90,13 @@ export default {
     list: Array, // 2:[{title,list:[{label,value}]}] 3:[{label,value}]
     values: Array,// []已选择的数组
     type: Number, // 1:（选择器 1维度数组） 2:（选择器单选 2维度数组） 3 :（多选 1维度数组）
+    propName: String,
   },
   data () {
     return {
       keyword: '',
-      picks: [...this.values]
+      picks: [...this.values],
+      result: [...this.list]
     };
   },
   computed: {},
@@ -82,6 +104,15 @@ export default {
     values: {
       handler (val, oldVal) {
         console.log(val, oldVal)
+      }
+    },
+    show: function (val) {
+      if (val) {
+        let body = document.body
+        body.style.overflow = 'hidden'
+      } else {
+        let body = document.body
+        body.style.overflow = 'auto'
       }
     }
   },
@@ -118,13 +149,27 @@ export default {
 
 
     },
+    onsearch () {
+
+      let list = this.list.filter(item => item.label.includes(this.keyword))
+      console.log(this.keyword, list)
+      this.result = list
+    },
+    onclear () {
+      this.result = [...this.list]
+    },
     onComfirm () {
-      this.$emit('onComfirm', this.picks)
+      this.$emit('onComfirm', this.picks, this.propName)
       this.$emit('close')
     },
     onclose () {
       this.picks = [...this.values]
       this.$emit('close')
+    },
+    eventMask (ev) {
+      if (!this.$refs.msk.contains(ev.target)) {
+        this.$emit('close')
+      }
     }
   },
   created () {
@@ -148,13 +193,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.3);
+  // height: 100%;
+  // background: rgba(0, 0, 0, 0.3);
 
   .wrapper-box {
     position: fixed;
     width: 100vw;
-    // height: 85vh;
     min-height: 40vh;
     max-height: 85vh;
     background: #fff;
@@ -187,7 +231,7 @@ export default {
     .btns {
       display: flex;
       align-items: center;
-      padding: 0 30px;
+      // padding: 0 30px;
       border-bottom: 1px solid #eee;
       > div {
         flex: 1;
@@ -215,6 +259,37 @@ export default {
     // padding: 0 10px;
     // font-size: 30px;
     // background: #f0f4f5;
+  }
+}
+
+.wmassageMask {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  .mask {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    .wrapper-box {
+      padding: 0;
+    }
+    .btns {
+      padding: 0 30px;
+    }
+    .listWrap {
+      height: calc(65vh);
+      overflow: hidden;
+      .list {
+        height: 100%;
+        overflow: auto;
+      }
+    }
   }
 }
 </style>

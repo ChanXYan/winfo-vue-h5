@@ -3,7 +3,7 @@ import 'vant/lib/button/style'
 import {
   Button, Toast, Dialog, Lazyload, Search, Calendar,
   Cell, CellGroup, Collapse, CollapseItem, Checkbox, CheckboxGroup, Picker, Popup, List,
-  PullRefresh, DropdownMenu, DropdownItem, Tab, Tabs, Divider,
+  PullRefresh, DropdownMenu, DropdownItem, Tab, Tabs, Divider, RadioGroup, Radio,
   Field, Overlay, Icon
 } from 'vant'
 
@@ -30,6 +30,8 @@ Vue.use(Button)
   .use(Divider)
   .use(Field)
   .use(Overlay)
+  .use(Radio)
+  .use(RadioGroup)
   .use(Lazyload, {
     lazyComponent: true
   })

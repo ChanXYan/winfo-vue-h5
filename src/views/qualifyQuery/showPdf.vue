@@ -24,7 +24,7 @@
       :scale.sync="scale"
       style="width:100%;margin:20px auto;"
     >
-      <template slot="loading">loading content here...</template>
+      <template slot="loading">加载中...</template>
     </pdf>
     <div id="buttons" class="ui grey three item inverted bottom fixed menu transition hidden">
       <button class="ml20 btn mr20" @click="scale -= scale > 0.2 ? 0.1 : 0">
@@ -82,8 +82,8 @@ export default {
   methods: {
     getPdf () {
       var self = this;
-      // let url = `./pdfs/${self.type}.pdf`
-      let url = `./test${self.type}.pdf`
+      let url = '/test1.pdf'
+      // let url = `./test${self.type}.pdf`
 
       self.pdfdata = pdfvuer.createLoadingTask(url);
       self.pdfdata.then(pdf => {
