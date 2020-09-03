@@ -12,8 +12,6 @@ axios.interceptors.request.use(
     //   ? 'Bearer ' + window.ls.get('token')
     //   : ''
 
-    console.log(config)
-
     if (config.headers['delToken']) {
       delete config.headers['Authorization']
       delete config.headers['delToken']
@@ -36,7 +34,6 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   (response) => {
-    console.log(1, response)
     window.hideToast && window.hideToast()
     let msg = ''
     switch (response.data.code) {

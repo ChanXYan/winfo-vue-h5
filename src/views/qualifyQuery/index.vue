@@ -110,23 +110,29 @@
         <div class="item">
           <span>考试时间</span>
           <div class="value">
-            <div class="time">
-              {{ksStartTime || '开始时间'}}
-              <span class="m50">-</span>
-              {{ksEndTime || '结束时间'}}
+            <div class="time" @click="showKsCalendar = true">
+              <p>{{ ksStartTime ? ksStart: '开始时间'}}</p>
+              <span class="iconfont iconcaret-down"></span>
+              <p>{{ksEndTime? ksEnd : '结束时间'}}</p>
+              <span class="iconfont iconcaret-down"></span>
             </div>
-            <van-icon v-if="ksStartTime && ksEndTime" class="pl20 pr20" name="clear" />
+            <div @click="ksStartTime='';ksEndTime=''">
+              <van-icon v-if="ksStartTime && ksEndTime" class="pl20 pr20" name="clear" />
+            </div>
           </div>
         </div>
         <div class="item">
           <span>报名时间</span>
           <div class="value">
-            <div class="time">
-              {{bmStartTime || '开始时间'}}
-              <span class="m50">-</span>
-              {{bmEndTime || '结束时间'}}
+            <div class="time" @click="showBmCalendar = true">
+              <p>{{ bmStartTime?bmStart:'开始时间'}}</p>
+              <span class="iconfont iconcaret-down"></span>
+              <p>{{ bmEndTime? bmEnd: '结束时间'}}</p>
+              <span class="iconfont iconcaret-down"></span>
             </div>
-            <van-icon v-if="bmEndTime && bmStartTime" class="pl20 pr20" name="clear" />
+            <div @click="bmEndTime='';bmStartTime=''">
+              <van-icon v-if="bmEndTime && bmStartTime" class="pl20 pr20" name="clear" />
+            </div>
           </div>
         </div>
         <div class="item dxcode">
@@ -138,7 +144,10 @@
       </div>
 
       <van-button class="query-btn" type="primary" @click="onComfirm">查询</van-button>
-      <p>适任考试计划可能会有调整，实际报名时请以海事局公布信息为准！</p>
+      <p>
+        适任考试计划可能会有调整，
+        <br />实际报名时请以海事局公布信息为准！
+      </p>
     </div>
 
     <!-- 船员考试科目 -->
@@ -199,8 +208,9 @@
 
         <div class="item">
           <span>报考等级</span>
-          <div class="value">
-            <van-field v-model="level" clearable placeholder="请输入身份证号码" />
+          <div class="value" @click="showLevel= true">
+            {{level ||'请选择'}}
+            <span class="iconfont icondown ml10"></span>
           </div>
         </div>
       </div>
@@ -219,28 +229,43 @@
       @onComfirm="onComfirmPick"
     ></queryPicker>
 
+    <!-- 报名时间 -->
     <van-calendar
       :min-date="new Date(2012, 0, 1)"
       v-model="showBmCalendar"
       type="range"
-      :default-date="[bmStartTime,bmEndTime]"
+      :default-date="[bmStartTime||new Date(),bmEndTime||new Date()]"
       color="#07c160"
       @confirm="chooseBmDate"
     />
+
+    <!-- 考试时间 -->
     <van-calendar
       :min-date="new Date(2012, 0, 1)"
-      v-model="showBmCalendar"
+      v-model="showKsCalendar"
       type="range"
-      :default-date="[ksStartTime,ksEndTime]"
+      :default-date="[ksStartTime||new Date(),ksEndTime||new Date()]"
       color="#07c160"
       @confirm="chooseKsDate"
     />
+
+    <!-- 报考等级 -->
+    <van-popup v-model="showLevel" position="bottom">
+      <van-picker
+        title
+        show-toolbar
+        :columns="levelList"
+        @confirm="onComfirmLevel"
+        @cancel="showLevel=false"
+      />
+    </van-popup>
   </div>
 </template>
 
 <script>
 import alertDetail from '../../components/orgQuery/alertDetail'
 import { idCardMatch } from '../../utils/matchStr'
+import { format } from 'date-fns'
 const tabs = [{
   label: '船员证书',
   value: 1
@@ -347,7 +372,7 @@ export default {
     //这里存放数据
     return {
       tabs,
-      active: 0,
+      active: 2,
       examList,
       ycsList,
       certifyTypeList,
@@ -365,11 +390,27 @@ export default {
       ksStartTime: '',
       ksEndTime: '',
       bmStartTime: '',
-      bmEndTime: ''
+      bmEndTime: '',
+      showBmCalendar: false,
+      showKsCalendar: false,
+      showLevel: false,
+      levelList: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
     };
   },
-  computed: {
 
+  computed: {
+    bmStart: function () {
+      return this.bmStartTime ? format(this.bmStartTime, 'yyyy-MM-dd') : ''
+    },
+    bmEnd: function () {
+      return this.bmEndTime ? format(this.bmEndTime, 'yyyy-MM-dd') : ''
+    },
+    ksStart: function () {
+      return this.ksStartTime ? format(this.ksStartTime, 'yyyy-MM-dd') : ''
+    },
+    ksEnd: function () {
+      return this.ksEndTime ? format(this.ksEndTime, 'yyyy-MM-dd') : ''
+    }
   },
   watch: {},
   methods: {
@@ -385,8 +426,23 @@ export default {
       this.idCard = ''
     },
 
-    chooseBmDate () { },
-    chooseKsDate () { },
+    chooseBmDate (e) {
+      const [start, end] = e
+      this.showBmCalendar = false
+      this.bmStartTime = start
+      this.bmEndTime = end
+    },
+    chooseKsDate (e) {
+      const [start, end] = e
+      this.showKsCalendar = false
+      this.ksStartTime = start
+      this.ksEndTime = end
+    },
+    onComfirmLevel (e) {
+      this.level = e
+      this.showLevel = false
+
+    },
     onComfirm () {
       let { active, } = this
 
@@ -511,7 +567,8 @@ export default {
   width: 100vw;
   height: 100vh;
   .m50 {
-    margin: 0 50px;
+    margin: 0 15px;
+    color: #ccc;
   }
 
   .list {
@@ -538,6 +595,11 @@ export default {
           display: flex;
           justify-content: flex-end;
           align-items: center;
+          width: 100%;
+          > p {
+            flex: 1;
+            text-align: center;
+          }
         }
       }
     }
@@ -551,12 +613,14 @@ export default {
   }
 
   .content {
-    border-top: 20px solid #f5f7fa;
+    border-top: 15px solid #f5f7fa;
   }
 
   .content3 {
     > p {
       margin-top: 30px;
+      line-height: 40px;
+      padding: 0 20px;
       font-size: 24px;
       font-family: PingFang SC;
       font-weight: 400;
@@ -566,9 +630,11 @@ export default {
   }
   .content4 {
     .lists {
+      background: #f5f7fa;
       .list {
+        background: transparent;
         width: 100%;
-
+        padding: 0;
         .title {
           padding: 0 30px;
           line-height: 70px;

@@ -133,11 +133,6 @@ export default {
   },
   computed: {},
   watch: {
-    values: {
-      handler (val, oldVal) {
-        console.log(val, oldVal)
-      }
-    },
     show: function (val) {
       if (val) {
         let body = document.body

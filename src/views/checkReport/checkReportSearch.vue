@@ -217,8 +217,6 @@ export default {
       // 存储路径参数
       this.ls.set('routeParams', params)
 
-      console.log(999, window.ls.get('routeParams'))
-
       this.$router.push({
         name: 'checkReportDetail',
         query: {
