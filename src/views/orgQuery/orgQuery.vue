@@ -9,21 +9,12 @@
 
     <div v-if="active === 0" class="content">
       <div class="list">
-        <div class="item">
-          <span>机构名称</span>
-          <div class="value field-tip" @blur="isFocus=false">
-            <van-field
-              class="tip-field"
-              v-model="param[0].org"
-              placeholder="请输入机构名称"
-              @focus="isFocus=true"
-              @click="handleTip"
-            />
-            <div class="tip-warp">
-              <div class="tip-item" v-for="i in matchingOrg" :key="i" @click="tapTip(i)">{{i}}</div>
-            </div>
-          </div>
-        </div>
+        <autocomplete
+          title="机构名称"
+          v-model="param[0].org"
+          placeholder="请输入机构名称"
+          :tipList="orgNames"
+        />
         <div class="item">
           <span>许可资质</span>
           <div class="value" @click="showQualification= true">
@@ -162,24 +153,24 @@
       />
     </van-popup>
     <!-- 培训项目 -->
-    <van-popup v-model="showTraining" position="bottom">
-      <van-picker
-        title
-        show-toolbar
-        :columns="trainingList"
-        @confirm="onConfirmTraining"
-        @cancel="showTraining=false"
-      />
-    </van-popup>
+    <queryPicker
+      :show="showTraining"
+      :type="3"
+      :list="trainingList"
+      :values="param[2].training"
+      @close="showTraining=false"
+      @onComfirm="onConfirmTraining"
+    />
   </div>
 </template>
 
 <script>
+import queryPicker from '../../components/queryPicker'
+import autocomplete from '../../components/autocomplete'
 
 export default {
   name: 'OrgQueryPage',
-  components: {
-  },
+  components: { queryPicker, autocomplete },
   data () {
     return {
       active: 0,
@@ -240,26 +231,6 @@ export default {
     queryData (type) {
       console.log(type);
     },
-    tapTip (str) {
-      console.log(str);
-      this.param[0].org = str
-
-    },
-    fieldBlur (event) {
-      console.log(event);
-    },
-    tipListener (e) {
-      console.log(e.target.className)
-      if (e.target.className !== 'tip-item'
-      ) {
-        this.isFocus = false
-      }
-    },
-    handleTip (e) {
-      e.stopPropagation()
-    }
-
-
 
   },
   created () {
@@ -270,14 +241,12 @@ export default {
 
   },
   mounted () {
-    document.addEventListener('click', this.tipListener)
   },
   activated () {
 
 
   },
   beforeDestroy () {
-    document.removeEventListener('click', this.tipListener)
   },
   destroyed () { },
 
@@ -295,6 +264,7 @@ export default {
     .list {
       padding: 0 30px;
       .item {
+        position: relative;
         display: flex;
         line-height: 88px;
         color: #666;
@@ -324,8 +294,6 @@ export default {
           }
 
           &.field-tip {
-            position: relative;
-
             > .tip-warp {
               z-index: 1;
               position: absolute;
