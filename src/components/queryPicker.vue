@@ -121,8 +121,12 @@ export default {
     show: Boolean,
     list: Array, // 2:[{title,list:[{label,value}]}] 3:[{label,value}]
     values: Array,// []已选择的数组
-    type: Number, // 1:（选择器 1维度数组） 2:（选择器单选 2维度数组） 3 :（多选 1维度数组 滚动） 4 (单选 2纬度 滚动)
+    type: Number, // 1:（选择器 1维度数组） 2:（选择器单选 2维度数组） 3 :（1维度数组 滚动） 4 (单选 2纬度 滚动)
     propName: String,
+    isSingle: { // 是否单选 默认单选
+      type: Boolean,
+      default: true
+    }
   },
   data () {
     return {
@@ -150,35 +154,18 @@ export default {
 
       let flag = this.picks.findIndex(item => item === value)
 
-      switch (this.type) {
-        case 1:
-          if (flag === -1) {
-            this.picks = [value]
-          } else {
-            this.picks = []
-          }
-          break
-        case 2:
-          if (flag === -1) {
-            this.picks = [value]
-          } else {
-            this.picks = []
-          }
-          break
-        case 3:
-          if (flag === -1) {
-            this.picks.push(value)
-          } else {
-            this.picks.splice(flag, 1)
-          }
-          break
-        case 4:
-          if (flag === -1) {
-            this.picks = [value]
-          } else {
-            this.picks = []
-          }
-          break
+      if (this.isSingle) {
+        if (flag === -1) {
+          this.picks = [value]
+        } else {
+          this.picks = []
+        }
+      } else {
+        if (flag === -1) {
+          this.picks.push(value)
+        } else {
+          this.picks.splice(flag, 1)
+        }
       }
 
 

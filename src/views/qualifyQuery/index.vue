@@ -16,26 +16,26 @@
         <div class="item">
           <span>身份证号码</span>
           <div class="value">
-            <van-field v-model="idCard" clearable placeholder="请输入身份证号码" />
+            <van-field v-model="formObj[0].idCard" clearable placeholder="请输入身份证号码" />
           </div>
         </div>
         <div class="item">
           <span>证书号码</span>
           <div class="value">
-            <van-field v-model="cerNo" clearable placeholder="请输入证书号码" />
+            <van-field v-model="formObj[0].cerNo" clearable placeholder="请输入证书号码" />
           </div>
         </div>
         <div class="item">
           <span>证书类型</span>
           <div class="value" @click="showCertifyType= true">
-            {{certifyType.toString() ||'请选择'}}
+            {{formObj[0].certifyType.toString() ||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
 
         <div class="item dxcode">
           <div class="value">
-            <van-field v-model="dxcode" clearable placeholder="请输入验证码" />
+            <van-field v-model="formObj[0].dxcode" clearable placeholder="请输入验证码" />
           </div>
           <img :src="require('../../assets/imgs/404.png')" alt />
         </div>
@@ -48,19 +48,19 @@
         <div class="item">
           <span>身份证号码</span>
           <div class="value">
-            <van-field v-model="idCard" clearable placeholder="请输入身份证号码" />
+            <van-field v-model="formObj[1].idCard" clearable placeholder="请输入身份证号码" />
           </div>
         </div>
         <div class="item">
           <span>准考证号码</span>
           <div class="value">
-            <van-field v-model="examNo" clearable placeholder="请输入准考证号码" />
+            <van-field v-model="formObj[1].examNo" clearable placeholder="请输入准考证号码" />
           </div>
         </div>
         <div class="item">
           <span>考试类型</span>
           <div class="value">
-            <van-radio-group icon-size="15" v-model="examType" direction="horizontal">
+            <van-radio-group icon-size="15" v-model="formObj[1].examType" direction="horizontal">
               <van-radio name="1">合格证考试</van-radio>
               <van-radio name="2">适任考试</van-radio>
             </van-radio-group>
@@ -69,7 +69,7 @@
         <div class="item">
           <span>考试类别</span>
           <div class="value">
-            <van-radio-group icon-size="15" v-model="examSort" direction="horizontal">
+            <van-radio-group icon-size="15" v-model="formObj[1].examSort" direction="horizontal">
               <van-radio name="1">理论</van-radio>
               <van-radio name="2">评估</van-radio>
             </van-radio-group>
@@ -78,7 +78,7 @@
 
         <div class="item dxcode">
           <div class="value">
-            <van-field v-model="dxcode" clearable placeholder="请输入验证码" />
+            <van-field v-model="formObj[1].dxcode" clearable placeholder="请输入验证码" />
           </div>
           <img :src="require('../../assets/imgs/404.png')" alt />
         </div>
@@ -91,33 +91,39 @@
       <div class="list">
         <div class="item">
           <span>考试类型</span>
-          <div class="value">
-            <van-field v-model="idCard" clearable placeholder="请输入考试类型" />
+          <div class="value" @click="showExamType= true">
+            {{formObj[2].type.toString() ||'请选择'}}
+            <span class="iconfont icondown ml10"></span>
           </div>
         </div>
         <div class="item">
           <span>考试科目</span>
-          <div class="value">
-            <van-field v-model="cerNo" clearable placeholder="请输入考试科目" />
+          <div class="value" @click="showSubject= true">
+            {{formObj[2].subject.toString() ||'请选择'}}
+            <span class="iconfont icondown ml10"></span>
           </div>
         </div>
         <div class="item">
           <span>制定机构</span>
           <div class="value">
-            <van-field v-model="cerNo" clearable placeholder="请输入制定机构" />
+            <van-field v-model="formObj[2].org" clearable placeholder="请输入制定机构" />
           </div>
         </div>
         <div class="item">
           <span>考试时间</span>
           <div class="value">
             <div class="time" @click="showKsCalendar = true">
-              <p>{{ ksStartTime ? ksStart: '开始时间'}}</p>
+              <p>{{ formObj[2].ksStartTime ? ksStart: '开始时间'}}</p>
               <span class="iconfont iconcaret-down"></span>
-              <p>{{ksEndTime? ksEnd : '结束时间'}}</p>
+              <p>{{formObj[2].ksEndTime? ksEnd : '结束时间'}}</p>
               <span class="iconfont iconcaret-down"></span>
             </div>
-            <div @click="ksStartTime='';ksEndTime=''">
-              <van-icon v-if="ksStartTime && ksEndTime" class="pl20 pr20" name="clear" />
+            <div @click="formObj[2].ksStartTime='';formObj[2].ksEndTime=''">
+              <van-icon
+                v-if="formObj[2].ksStartTime && formObj[2].ksEndTime"
+                class="pl20 pr20"
+                name="clear"
+              />
             </div>
           </div>
         </div>
@@ -125,19 +131,23 @@
           <span>报名时间</span>
           <div class="value">
             <div class="time" @click="showBmCalendar = true">
-              <p>{{ bmStartTime?bmStart:'开始时间'}}</p>
+              <p>{{ formObj[2].bmStartTime?bmStart:'开始时间'}}</p>
               <span class="iconfont iconcaret-down"></span>
-              <p>{{ bmEndTime? bmEnd: '结束时间'}}</p>
+              <p>{{ formObj[2].bmEndTime? bmEnd: '结束时间'}}</p>
               <span class="iconfont iconcaret-down"></span>
             </div>
-            <div @click="bmEndTime='';bmStartTime=''">
-              <van-icon v-if="bmEndTime && bmStartTime" class="pl20 pr20" name="clear" />
+            <div @click="formObj[2].bmEndTime='';formObj[2].bmStartTime=''">
+              <van-icon
+                v-if="formObj[2].bmEndTime && formObj[2].bmStartTime"
+                class="pl20 pr20"
+                name="clear"
+              />
             </div>
           </div>
         </div>
         <div class="item dxcode">
           <div class="value">
-            <van-field v-model="dxcode" clearable placeholder="请输入验证码" />
+            <van-field v-model="formObj[2].dxcode" clearable placeholder="请输入验证码" />
           </div>
           <img :src="require('../../assets/imgs/404.png')" alt />
         </div>
@@ -196,20 +206,20 @@
         <div class="item">
           <span>姓名</span>
           <div class="value">
-            <van-field v-model="name" clearable placeholder="请输入姓名" />
+            <van-field v-model="formObj[5].name" clearable placeholder="请输入姓名" />
           </div>
         </div>
         <div class="item">
           <span>身份证号</span>
           <div class="value">
-            <van-field v-model="idCard" clearable placeholder="请输入身份证号码" />
+            <van-field v-model="formObj[5].idCard" clearable placeholder="请输入身份证号码" />
           </div>
         </div>
 
         <div class="item">
           <span>报考等级</span>
           <div class="value" @click="showLevel= true">
-            {{level ||'请选择'}}
+            {{formObj[5].level ||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
@@ -218,12 +228,13 @@
     </div>
 
     <alertDetail :show="showDetail5" :type="4" @close="showDetail5 = false"></alertDetail>
-
+    <!-- 证书类型 多选 -->
     <queryPicker
       :show="showCertifyType"
       :type="3"
+      :isSingle="false"
       :list="certifyTypeList"
-      :values="certifyType"
+      :values="formObj[0].certifyType"
       propName="certifyType"
       @close="showCertifyType=false"
       @onComfirm="onComfirmPick"
@@ -234,7 +245,7 @@
       :min-date="new Date(2012, 0, 1)"
       v-model="showBmCalendar"
       type="range"
-      :default-date="[bmStartTime||new Date(),bmEndTime||new Date()]"
+      :default-date="[formObj[2].bmStartTime||new Date(),formObj[2].bmEndTime||new Date()]"
       color="#07c160"
       @confirm="chooseBmDate"
     />
@@ -244,7 +255,7 @@
       :min-date="new Date(2012, 0, 1)"
       v-model="showKsCalendar"
       type="range"
-      :default-date="[ksStartTime||new Date(),ksEndTime||new Date()]"
+      :default-date="[formObj[2].ksStartTime||new Date(), formObj[2].ksEndTime||new Date()]"
       color="#07c160"
       @confirm="chooseKsDate"
     />
@@ -259,6 +270,25 @@
         @cancel="showLevel=false"
       />
     </van-popup>
+
+    <!-- 考试类型 单选 -->
+    <queryPicker
+      :show="showExamType"
+      :type="2"
+      :list="examTypeList"
+      :values="formObj[2].type"
+      @close="showExamType=false"
+      @onComfirm="onComfirmExamType"
+    ></queryPicker>
+    <!-- 考试科目 单选 -->
+    <queryPicker
+      :show="showSubject"
+      :type="3"
+      :list="subjectList"
+      :values="formObj[2].subject"
+      @close="showSubject=false"
+      @onComfirm="onComfirmSubject"
+    ></queryPicker>
   </div>
 </template>
 
@@ -286,6 +316,27 @@ const tabs = [{
   value: 6
 }]
 
+const subjectList = [
+  {
+    label: '航海英语',
+    value: 1
+  }, {
+    label: '船舶操纵与避碰',
+    value: 2
+  }, {
+    label: '航海学',
+    value: 3
+  }, {
+    label: '船舶管理（驾驶）',
+    value: 4
+  }, {
+    label: '船舶结构与货运',
+    value: 5
+  }, {
+    label: '船舶辅机',
+    value: 6
+  }
+]
 const examList = [{
   title: '海船船员考试科目',
   list: [{
@@ -323,6 +374,47 @@ const examList = [{
     value: 9
   }]
 }]
+
+const examTypeList = [
+  {
+    title: '海船考试类型',
+    list: [{
+      label: '船长和高级船员适任考试',
+      value: '1'
+    }, {
+      label: '普通和高级船员适任考试',
+      value: '2'
+    }, {
+      label: 'GMDSS适任考试',
+      value: '3'
+    }, {
+      label: '非自航船适任考试',
+      value: '4'
+    }, {
+      label: '海港引航员适任考试',
+      value: '5'
+    }]
+  },
+  {
+    title: '内河考试类型',
+    list: [{
+      label: '内河全国统考（长江）',
+      value: '6'
+    }, {
+      label: '内河全国统考（珠江）',
+      value: '7'
+    }, {
+      label: '内河全国统考（黑龙江）',
+      value: '8'
+    }, {
+      label: '内河非全国统考',
+      value: '9'
+    }, {
+      label: '内河引航员考试',
+      value: '10'
+    }]
+  }
+]
 
 //验船师list
 const ycsList = [{
@@ -372,47 +464,107 @@ export default {
     //这里存放数据
     return {
       tabs,
-      active: 2,
+      active: 0,
       examList,
       ycsList,
+      formObj: {
+        0: {
+          idCard: '',
+          cerNo: '',
+          certifyType: [],//证书类型
+          dxcode: ''
+        },
+        1: {
+          idCard: '',
+          examNo: '',//准考证号码
+          examType: '',//考试类型
+          examSort: '',//考试类别
+          dxcode: ''
+        },
+        2: {
+          type: [],
+          subject: [],
+          org: '',
+          ksStartTime: '',
+          ksEndTime: '',
+          bmStartTime: '',
+          bmEndTime: '',
+          dxcode: ''
+        },
+        5: {
+          name: '',
+          idCard: '',
+          level: ''
+        }
+
+      },
       certifyTypeList,
+      showExamType: false,
+      examTypeList,
       showCertifyType: false,
       showDetail5: false,
-      idCard: '',
-      cerNo: '',//证书号码
-      dxcode: '',
-      certifyType: [],//证书类型
-      examNo: '',//准考证号码
-      examType: '',//考试类型
-      examSort: '',//考试类别
-      name: '',//考生姓名
-      level: '',//报考等级
-      ksStartTime: '',
-      ksEndTime: '',
-      bmStartTime: '',
-      bmEndTime: '',
       showBmCalendar: false,
       showKsCalendar: false,
+      showSubject: false,
+      subjectList,
       showLevel: false,
-      levelList: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
+      levelList: ['A', 'B', 'C', 'D'],
     };
   },
 
   computed: {
     bmStart: function () {
-      return this.bmStartTime ? format(this.bmStartTime, 'yyyy-MM-dd') : ''
+      return this.formObj[2].bmStartTime ? format(this.formObj[2].bmStartTime, 'yyyy-MM-dd') : ''
     },
     bmEnd: function () {
-      return this.bmEndTime ? format(this.bmEndTime, 'yyyy-MM-dd') : ''
+      return this.formObj[2].bmEndTime ? format(this.formObj[2].bmEndTime, 'yyyy-MM-dd') : ''
     },
     ksStart: function () {
-      return this.ksStartTime ? format(this.ksStartTime, 'yyyy-MM-dd') : ''
+      return this.formObj[2].ksStartTime ? format(this.formObj[2].ksStartTime, 'yyyy-MM-dd') : ''
     },
     ksEnd: function () {
-      return this.ksEndTime ? format(this.ksEndTime, 'yyyy-MM-dd') : ''
+      return this.formObj[2].ksEndTime ? format(this.formObj[2].ksEndTime, 'yyyy-MM-dd') : ''
     }
   },
-  watch: {},
+  watch: {
+    $route (to, from) {
+      if (to.name === 'qualifyQuery' && from.name !== 'showPdf') {
+        // 不从详情进来的页面， 都是初始化参数
+        this.active = 0
+        this.formObj = {
+          0: {
+            idCard: '',
+            cerNo: '',
+            certifyType: [],//证书类型
+            dxcode: ''
+          },
+          1: {
+            idCard: '',
+            examNo: '',//准考证号码
+            examType: '',//考试类型
+            examSort: '',//考试类别
+            dxcode: ''
+          },
+          2: {
+            type: [],
+            subject: [],
+            org: '',
+            ksStartTime: '',
+            ksEndTime: '',
+            bmStartTime: '',
+            bmEndTime: '',
+            dxcode: ''
+          },
+          5: {
+            name: '',
+            idCard: '',
+            level: ''
+          }
+
+        }
+      }
+    },
+  },
   methods: {
     toDetail (o) {
       this.$router.push({
@@ -429,23 +581,24 @@ export default {
     chooseBmDate (e) {
       const [start, end] = e
       this.showBmCalendar = false
-      this.bmStartTime = start
-      this.bmEndTime = end
+      this.formObj[2].bmStartTime = start
+      this.formObj[2].bmEndTime = end
     },
     chooseKsDate (e) {
       const [start, end] = e
       this.showKsCalendar = false
-      this.ksStartTime = start
-      this.ksEndTime = end
+      this.formObj[2].ksStartTime = start
+      this.formObj[2].ksEndTime = end
+      this.formObj = { ...this.formObj }
     },
     onComfirmLevel (e) {
-      this.level = e
+      this.formObj[5].level = e
+      this.formObj = { ...this.formObj }
       this.showLevel = false
 
     },
     onComfirm () {
       let { active, } = this
-
       switch (active) {
         case 0:
           this.crewApi()
@@ -454,6 +607,7 @@ export default {
           this.crewExamApi()
           break
         case 2:
+          this.examPlanApi()
           break
         case 5:
           this.freeStudentApi()
@@ -462,7 +616,7 @@ export default {
 
     },
     crewApi () {
-      let { idCard, cerNo, certifyType, dxcode } = this
+      let { idCard, cerNo, certifyType, dxcode } = this.formObj[0]
 
       if (!idCard) {
         this.toast('请填写身份证')
@@ -481,7 +635,7 @@ export default {
         this.toast('证书号码不能超过20位') //！！！
         return
       }
-      if (!certifyType) {
+      if (certifyType.length === 0) {
         this.toast('请填写证书类型')
         return
       }
@@ -493,7 +647,7 @@ export default {
       // 请求接口
     },
     crewExamApi () {
-      let { idCard, examNo, examType, examSort, dxcode } = this
+      let { idCard, examNo, examType, examSort, dxcode } = this.formObj[1]
 
       if (!idCard) {
         this.toast('请填写身份证')
@@ -507,11 +661,11 @@ export default {
         this.toast('请填写准考证号')
         return
       }
-      if (!examType) {
+      if (examType.length === 0) {
         this.toast('请选择考试类型')
         return
       }
-      if (!examSort) {
+      if (examSort.length === 0) {
         this.toast('请选择考试类别')
         return
       }
@@ -520,12 +674,54 @@ export default {
         return
       }
     },
-    onComfirmPick (o, prop) {
-      this[prop] = [...o]
-      console.log(prop, this)
+    examPlanApi () {
+      let { type, subject, org, ksStartTime, ksEndTime, bmStartTime, bmEndTime, dxcode } = this.formObj[2]
+      if (type.length === 0) {
+        this.toast('请选择考试类型')
+        return
+      }
+
+      if (subject.length === 0) {
+        this.toast('请填写考试科目')
+        return
+      }
+
+      if (!org) {
+        this.toast('请填写制定机构')
+        return
+      }
+
+      if (!ksStartTime || !ksEndTime) {
+        this.toast('请选择考试时间')
+        return
+      }
+
+      if (!bmStartTime || !bmEndTime) {
+        this.toast('请选择报名时间')
+        return
+      }
+      if (!dxcode) {
+        this.toast('请填写验证码')
+        return
+      }
+    },
+    onComfirmExamType (o) {
+      this.formObj[2].type = [...o]
+      this.formObj = { ...this.formObj }
+      this.showExamType = false
+    },
+    onComfirmPick (o) {
+      this.formObj[0].certifyType = [...o]
+      this.formObj = { ...this.formObj }
+      this.showCertifyType = false
+    },
+    onComfirmSubject (o) {
+      this.formObj[2].subject = [...o]
+      this.formObj = { ...this.formObj }
+      this.showSubject = false
     },
     freeStudentApi () {
-      let { name, idCard, level } = this
+      let { name, idCard, level } = this.formObj[5]
       if (!name) {
         this.toast('请填写姓名')
         return
