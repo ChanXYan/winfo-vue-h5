@@ -67,12 +67,10 @@ export default {
     this.type = this.$route.query.type
     this.getPdf()
   },
+  activated () {
+
+  },
   watch: {
-    show: function (s) {
-      if (s) {
-        this.getPdf();
-      }
-    },
     page: function (p) {
       if (window.pageYOffset <= this.findPos(document.getElementById(p)) || (document.getElementById(p + 1) && window.pageYOffset >= this.findPos(document.getElementById(p + 1)))) {
         document.getElementById(p).scrollIntoView();
@@ -82,8 +80,7 @@ export default {
   methods: {
     getPdf () {
       var self = this;
-      let url = '/test1.pdf'
-      // let url = `./test${self.type}.pdf`
+      let url = `/${self.type}.pdf`
 
       self.pdfdata = pdfvuer.createLoadingTask(url);
       self.pdfdata.then(pdf => {
