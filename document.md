@@ -21,6 +21,9 @@ https://www.cnblogs.com/xudaxian/p/12610463.html
 #### 有关keep-alive处理页面缓存
 https://zhuanlan.zhihu.com/p/96740001
 
+关于在路由中配置keepAlive 为 `true`的页面中
+出现修改代码热更新时 页面出现空白，刷新后正常显示（暂时不影响页面使用，但是开发体验不好 ！！！后期优化）
+
 
 
 ```

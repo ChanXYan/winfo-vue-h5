@@ -33,6 +33,14 @@ export default {
         url: '/airInfo',
         name: '气象信息',
         params: ''
+      }, {
+        url: '/orgQuery',
+        name: '机构查询',
+        params: ''
+      }, {
+        url: '/qualifyQuery',
+        name: '资质查询',
+        params: ''
       }]
     }
   },

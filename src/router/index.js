@@ -15,28 +15,28 @@ const routes = [
   {
     path: "/checkReportDetail",
     name: 'checkReportDetail',
-    meta: { title: '报告查询详情' },
+    meta: { title: '报告查询详情', keepAlive: true, },
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/checkReport/checkReportDetail.vue')
   },
   {
     path: "/checkReportSearch",
     name: "checkReportSearch",
-    meta: { title: '报告查询' },
+    meta: { title: '报告查询', keepAlive: true, },
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/checkReport/checkReportSearch.vue')
   },
   {
     path: "/airInfo",
     name: "airInfo",
-    meta: { title: '气象信息' },
+    meta: { title: '气象信息', keepAlive: true, },
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/securityInformation/airInfo.vue')
   },
   {
     path: "/airDetail",
     name: "airDetail",
-    meta: { title: '气象详情' },
+    meta: { title: '气象详情', keepAlive: true, },
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/securityInformation/airDetail.vue')
   },
@@ -53,7 +53,7 @@ const routes = [
   {
     path: "/navWarningDetail",
     name: "navWarningDetail",
-    meta: { title: '航行警告详情' },
+    meta: { title: '航行警告详情', },
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/securityInformation/navWarningDetail.vue')
   },
@@ -66,7 +66,7 @@ const routes = [
   {
     path: "/orgQuery",
     name: "orgQuery",
-    meta: { title: '机构查询' },
+    meta: { title: '机构查询', keepAlive: false, },
     component: () => import('../views/orgQuery/orgQuery.vue')
   },
   {
@@ -78,13 +78,13 @@ const routes = [
   {
     path: "/qualifyQuery",
     name: "qualifyQuery",
-    meta: { title: '资质查询' },
+    meta: { title: '资质查询', keepAlive: true, },
     component: () => import('../views/qualifyQuery/index.vue')
   },
   {
     path: "/showPdf",
     name: "showPdf",
-    meta: { title: '资质查询' },
+    meta: { title: '资质查询', keepAlive: true, },
     component: () => import('../views/qualifyQuery/showPdf.vue')
   },
   {
@@ -113,6 +113,7 @@ const router = new VueRouter({
   routes
 })
 
+
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title === undefined ? 'Winfo H5' : to.meta.title
   if (to.path !== from.path) {
@@ -120,14 +121,14 @@ router.beforeEach((to, from, next) => {
   }
 
   // 处理keepAlive页面缓存的 副作用
-  let toDepth = to.path.split('/').length
-  let fromDepth = from.path.split('/').length
+  // let toDepth = to.path.split('/').length
+  // let fromDepth = from.path.split('/').length
 
-  if (toDepth < fromDepth) {
-    // console.log('back...')
-    from.meta.keepAlive = false
-    to.meta.keepAlive = true
-  }
+  // if (toDepth < fromDepth) {
+  //   // console.log('back...')
+  //   from.meta.keepAlive = false
+  //   to.meta.keepAlive = true
+  // }
 
   next()
 })
