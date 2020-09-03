@@ -82,9 +82,17 @@
               <div class="cancel" @click="onclose">取消</div>
               <div class="sure" @click="onComfirm">确定</div>
             </div>
+            <van-search
+              class="my-search"
+              v-model="keyword"
+              shape="round"
+              placeholder="请输入关键字"
+              @search="onsearch"
+              @clear="onclear"
+            />
             <div class="listWrap">
               <div class="lists">
-                <div class="list" v-for="(item,index) in list" :key="'item'+index">
+                <div class="list" v-for="(item,index) in result" :key="'item'+index">
                   <p>{{item.title}}</p>
                   <div
                     v-for="(o,index) in item.list"
@@ -182,9 +190,33 @@ export default {
     },
     onsearch () {
 
-      let list = this.list.filter(item => item.label.includes(this.keyword))
-      console.log(this.keyword, list)
-      this.result = list
+      if (this.type === 1) {
+        let list = this.list.filter(item => item.label.includes(this.keyword))
+
+        this.result = list
+      }
+
+      if (this.type === 4) {
+
+        let temp = []
+        this.list.map(item => {
+          let list = []
+          item.list.map(o => {
+            if (o.label.includes(this.keyword)) {
+              list.push(o)
+            }
+          })
+          if (list.length) {
+            temp.push({
+              title: item.title,
+              list: list
+            })
+          }
+        })
+        this.result = temp
+      }
+
+
     },
     onclear () {
       this.result = [...this.list]

@@ -18,7 +18,7 @@
 
     <div class="mt30">
       <button @click="show4 =!show4">显示二维单选（滚动）</button>
-      {{values2}}
+      {{values3}}
     </div>
     <queryPicker
       :show="show1"
@@ -41,9 +41,9 @@
       :show="show4"
       :type="4"
       :list="list2"
-      :values="values1"
+      :values="values3"
       @close="show4=false"
-      @onComfirm="onComfirm2"
+      @onComfirm="onComfirm3"
     ></queryPicker>
     <div>
       1
@@ -150,6 +150,7 @@ export default {
       values: [1, 2],
       values1: ['2'],
       values2: ['1'],
+      values3: [],
       list1: [
         {
           label: '合格证',
@@ -281,7 +282,9 @@ export default {
     onComfirm2 (o) {
       this.values1 = [...o]
     },
-
+    onComfirm3 (o) {
+      this.values3 = [...o]
+    },
   },
   created () {
 
