@@ -15,6 +15,11 @@
       <button @click="show3 =!show3">显示一维单选</button>
       {{values2}}
     </div>
+
+    <div class="mt30">
+      <button @click="show4 =!show4">显示二维单选（滚动）</button>
+      {{values2}}
+    </div>
     <queryPicker
       :show="show1"
       :type="3"
@@ -32,7 +37,14 @@
       @onComfirm="onComfirm2"
     ></queryPicker>
     <queryPicker :show="show3" :type="1" :list="list3" :values="values2" @close="show3=false"></queryPicker>
-
+    <queryPicker
+      :show="show4"
+      :type="4"
+      :list="list2"
+      :values="values1"
+      @close="show4=false"
+      @onComfirm="onComfirm2"
+    ></queryPicker>
     <div>
       1
       <br />1
@@ -134,6 +146,7 @@ export default {
       show1: false,
       show2: false,
       show3: false,
+      show4: false,
       values: [1, 2],
       values1: ['2'],
       values2: ['1'],
@@ -203,6 +216,42 @@ export default {
       ],
       list3: [
         {
+          label: '航海英语',
+          value: 1
+        }, {
+          label: '船舶操纵与避碰',
+          value: 2
+        }, {
+          label: '航海学',
+          value: 3
+        }, {
+          label: '船舶管理（驾驶）',
+          value: 4
+        }, {
+          label: '船舶结构与货运',
+          value: 5
+        }, {
+          label: '船舶辅机',
+          value: 6
+        }, {
+          label: '航海英语',
+          value: 1
+        }, {
+          label: '船舶操纵与避碰',
+          value: 2
+        }, {
+          label: '航海学',
+          value: 3
+        }, {
+          label: '船舶管理（驾驶）',
+          value: 4
+        }, {
+          label: '船舶结构与货运',
+          value: 5
+        }, {
+          label: '船舶辅机',
+          value: 6
+        }, {
           label: '航海英语',
           value: 1
         }, {

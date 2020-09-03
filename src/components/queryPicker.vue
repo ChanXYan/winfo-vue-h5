@@ -45,7 +45,7 @@
       </div>
     </van-overlay>
 
-    <section class="wmassageMask" v-show="(type === 1)&&show" @click="eventMask($event)">
+    <section class="wmassageMask" v-show="(type === 1||type===4)&&show" @click="eventMask($event)">
       <div class="mask" ref="msk">
         <div v-if="type===1">
           <div class="wrapper-box">
@@ -76,6 +76,30 @@
             </div>
           </div>
         </div>
+        <div v-if="type===4">
+          <div class="wrapper-box">
+            <div class="btns">
+              <div class="cancel" @click="onclose">取消</div>
+              <div class="sure" @click="onComfirm">确定</div>
+            </div>
+            <div class="listWrap">
+              <div class="lists">
+                <div class="list" v-for="(item,index) in list" :key="'item'+index">
+                  <p>{{item.title}}</p>
+                  <div
+                    v-for="(o,index) in item.list"
+                    :key="'o'+index"
+                    class="item"
+                    @click="clickItem(o)"
+                  >
+                    <p>{{o.label}}</p>
+                    <span v-if="picks.includes(o.value)" class="iconfont iconcheck"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -89,7 +113,7 @@ export default {
     show: Boolean,
     list: Array, // 2:[{title,list:[{label,value}]}] 3:[{label,value}]
     values: Array,// []已选择的数组
-    type: Number, // 1:（选择器 1维度数组） 2:（选择器单选 2维度数组） 3 :（多选 1维度数组）
+    type: Number, // 1:（选择器 1维度数组） 2:（选择器单选 2维度数组） 3 :（多选 1维度数组 滚动） 4 (单选 2纬度 滚动)
     propName: String,
   },
   data () {
@@ -143,6 +167,13 @@ export default {
             this.picks.push(value)
           } else {
             this.picks.splice(flag, 1)
+          }
+          break
+        case 4:
+          if (flag === -1) {
+            this.picks = [value]
+          } else {
+            this.picks = []
           }
           break
       }
@@ -285,9 +316,36 @@ export default {
     .listWrap {
       height: calc(65vh);
       overflow: hidden;
+
       .list {
         height: 100%;
+        width: 100%;
         overflow: auto;
+        > p {
+          font-size: 24px;
+          margin: 0 15px;
+          line-height: 80px;
+          border-bottom: 1px solid #eee;
+        }
+        .item {
+          display: flex;
+          line-height: 88px;
+          margin-left: 30px;
+          padding-right: 30px;
+          border-bottom: 1px solid #eee;
+          > p {
+            flex: 1;
+          }
+        }
+      }
+      .lists {
+        height: 100%;
+        width: 100%;
+        overflow: auto;
+        > .list {
+          overflow: hidden;
+          height: auto;
+        }
       }
     }
   }
