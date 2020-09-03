@@ -11,8 +11,17 @@
       <div class="list">
         <div class="item">
           <span>机构名称</span>
-          <div class="value">
-            <van-field v-model="org" placeholder="请输入机构名称" />
+          <div class="value field-tip" @blur="isFocus=false">
+            <van-field
+              class="tip-field"
+              v-model="param[0].org"
+              placeholder="请输入机构名称"
+              @focus="isFocus=true"
+              @click="handleTip"
+            />
+            <div class="tip-warp">
+              <div class="tip-item" v-for="i in matchingOrg" :key="i" @click="tapTip(i)">{{i}}</div>
+            </div>
           </div>
         </div>
         <div class="item">
@@ -178,6 +187,7 @@ export default {
       loading: false,
       finished: false,
       param: [{
+        org: '',
         qualification: ''
       }, {
         // 体检机构
@@ -188,12 +198,14 @@ export default {
       }, {
         training: ''
       }],
-      org: '',
+      orgNames: ['111', '121', '231', '213123', '321213', 'dsa', 'sad'],
       keyword: '',
+      isFocus: false,
+      selected: [],
       orgNameObj: {},
       // picker数组
       showQualification: false,
-      qualificationList: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
+      qualificationList: ['甲级服务机构', '乙级服务机构', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州', '杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
       showProvince: false,
       provinceList: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
       showJurisdiction: false,
@@ -202,7 +214,12 @@ export default {
       trainingList: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
     };
   },
-  computed: {},
+  computed: {
+    matchingOrg () {
+      if (!this.isFocus || !this.param[0].org.length || !this.orgNames.length) return []
+      return this.orgNames.filter(e => e.includes(this.param[0].org))
+    }
+  },
   methods: {
     onConfirmshowQualification (value) {
       this.param[0].qualification = value
@@ -222,6 +239,24 @@ export default {
     },
     queryData (type) {
       console.log(type);
+    },
+    tapTip (str) {
+      console.log(str);
+      this.param[0].org = str
+
+    },
+    fieldBlur (event) {
+      console.log(event);
+    },
+    tipListener (e) {
+      console.log(e.target.className)
+      if (e.target.className !== 'tip-item'
+      ) {
+        this.isFocus = false
+      }
+    },
+    handleTip (e) {
+      e.stopPropagation()
     }
 
 
@@ -235,13 +270,15 @@ export default {
 
   },
   mounted () {
-
+    document.addEventListener('click', this.tipListener)
   },
   activated () {
 
 
   },
-  beforeDestroy () { },
+  beforeDestroy () {
+    document.removeEventListener('click', this.tipListener)
+  },
   destroyed () { },
 
 }
@@ -283,6 +320,33 @@ export default {
               width: 189px;
               height: 68px;
               align-self: center;
+            }
+          }
+
+          &.field-tip {
+            position: relative;
+
+            > .tip-warp {
+              z-index: 1;
+              position: absolute;
+              top: 94px;
+              left: 0;
+              width: 100%;
+              max-height: 360px;
+              background: #ffffff;
+              box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.1);
+              border-radius: 12px;
+              overflow: hidden;
+              overflow-y: scroll;
+
+              > .tip-item {
+                text-align: left;
+                padding-left: 22px;
+                margin: 0 20px;
+                height: 88px;
+                width: calc(100%-40px);
+                border-bottom: 1px solid #f5f7fa;
+              }
             }
           }
         }
