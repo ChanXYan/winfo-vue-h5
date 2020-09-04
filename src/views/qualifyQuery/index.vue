@@ -27,8 +27,9 @@
         </div>
         <div class="item">
           <span>证书类型</span>
-          <div class="value" @click="showCertifyType= true">
-            {{formObj[0].certifyType.toString() ||'请选择'}}
+          <div :class="['value',certifyTypeView ? 'wrap':'']" @click="showCertifyType= true">
+            <!-- formObj[0].certifyType.toString()  -->
+            {{certifyTypeView||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
@@ -60,19 +61,19 @@
         <div class="item">
           <span>考试类型</span>
           <div class="value">
-            <van-radio-group icon-size="15" v-model="formObj[1].examType" direction="horizontal">
-              <van-radio name="1">合格证考试</van-radio>
-              <van-radio name="2">适任考试</van-radio>
-            </van-radio-group>
+            <van-checkbox-group icon-size="15" v-model="formObj[1].examType" direction="horizontal">
+              <van-checkbox name="1">合格证考试</van-checkbox>
+              <van-checkbox name="2">适任考试</van-checkbox>
+            </van-checkbox-group>
           </div>
         </div>
         <div class="item">
           <span>考试类别</span>
           <div class="value">
-            <van-radio-group icon-size="15" v-model="formObj[1].examSort" direction="horizontal">
-              <van-radio name="1">理论</van-radio>
-              <van-radio name="2">评估</van-radio>
-            </van-radio-group>
+            <van-checkbox-group icon-size="15" v-model="formObj[1].examSort" direction="horizontal">
+              <van-checkbox name="1">理论</van-checkbox>
+              <van-checkbox name="2">评估</van-checkbox>
+            </van-checkbox-group>
           </div>
         </div>
 
@@ -294,7 +295,7 @@
 
 <script>
 import alertDetail from '../../components/orgQuery/alertDetail'
-import { idCardMatch } from '../../utils/matchStr'
+import { idCardMatch, certificateMatch } from '../../utils/matchStr'
 import { format } from 'date-fns'
 const tabs = [{
   label: '船员证书',
@@ -464,7 +465,7 @@ export default {
     //这里存放数据
     return {
       tabs,
-      active: 0,
+      active: 1,
       examList,
       ycsList,
       formObj: {
@@ -477,8 +478,8 @@ export default {
         1: {
           idCard: '',
           examNo: '',//准考证号码
-          examType: '',//考试类型
-          examSort: '',//考试类别
+          examType: [],//考试类型
+          examSort: [],//考试类别
           dxcode: ''
         },
         2: {
@@ -524,11 +525,19 @@ export default {
     },
     ksEnd: function () {
       return this.formObj[2].ksEndTime ? format(this.formObj[2].ksEndTime, 'yyyy-MM-dd') : ''
+    },
+    certifyTypeView: function () {
+
+      let temp = this.calcDate(this.certifyTypeList, this.formObj[0].certifyType)
+
+      return temp ? temp.join('、') : ''
     }
   },
   watch: {
     $route (to, from) {
-      if (to.name === 'qualifyQuery' && from.name !== 'showPdf') {
+      console.log(to, from)
+      const hasCatchPage = ['crewCertificate', 'showPdf']
+      if (to.name === 'qualifyQuery' && !hasCatchPage.includes(from.name)) {
         // 不从详情进来的页面， 都是初始化参数
         this.active = 0
         this.formObj = {
@@ -566,6 +575,23 @@ export default {
     },
   },
   methods: {
+    /**
+     * 将 [value1,value2,...] 换成 [label1,label2,...]进行展示
+     */
+    calcDate (a, b) {
+      let obj = {}
+      let temp = []
+      a.map(item => {
+        obj[item.value] = item.label
+      })
+
+      let list = b
+
+      if (list.length) {
+        temp = list.map(item => obj[item])
+      }
+      return temp
+    },
     toDetail (o) {
       this.$router.push({
         path: '/showPdf',
@@ -615,91 +641,99 @@ export default {
       }
 
     },
+    // 船员证书
     crewApi () {
       let { idCard, cerNo, certifyType, dxcode } = this.formObj[0]
 
-      if (!idCard) {
-        this.toast('请填写身份证')
+      if (!(idCard || cerNo)) {
+        this.toast('身份证、证书号码至少填写一项目!')
         return
       }
 
-      if (!idCardMatch.test(idCard)) {
+      if (idCard && !idCardMatch.test(idCard)) {
         this.toast('身份证格式不正确')
         return
       }
-      if (!cerNo) {
-        this.toast('请填写证书号码')
+
+      if (cerNo && !certificateMatch.test(cerNo)) {
+        this.toast('证书号码格式不正确')
         return
       }
-      if (cerNo.length > 20) {
-        this.toast('证书号码不能超过20位') //！！！
-        return
-      }
-      if (certifyType.length === 0) {
-        this.toast('请填写证书类型')
-        return
-      }
+
       if (!dxcode) {
         this.toast('请填写验证码')
         return
       }
 
       // 请求接口
+      this.$router.push({
+        name: 'crewCertificate',
+        query: {
+          type: 1 //船员证书详情
+        }
+      })
     },
     crewExamApi () {
       let { idCard, examNo, examType, examSort, dxcode } = this.formObj[1]
 
-      if (!idCard) {
-        this.toast('请填写身份证')
+      if (!(idCard || examNo)) {
+        this.toast('身份证、准考证号至少填写一项目!')
         return
       }
-      if (!idCardMatch.test(idCard)) {
+      if (idCard && !idCardMatch.test(idCard)) {
         this.toast('身份证格式不正确')
         return
       }
-      if (!examNo) {
-        this.toast('请填写准考证号')
+      if (examNo && !certificateMatch.test(examNo)) {
+        this.toast('准考证号格式不正确')
         return
       }
-      if (examType.length === 0) {
-        this.toast('请选择考试类型')
-        return
-      }
-      if (examSort.length === 0) {
-        this.toast('请选择考试类别')
-        return
-      }
+
+
       if (!dxcode) {
         this.toast('请填写验证码')
         return
       }
+
+      this.$router.push({
+        name: 'crewCertificate',
+        query: {
+          type: 2 //船员成绩详情
+        }
+      })
+
     },
     examPlanApi () {
       let { type, subject, org, ksStartTime, ksEndTime, bmStartTime, bmEndTime, dxcode } = this.formObj[2]
-      if (type.length === 0) {
-        this.toast('请选择考试类型')
+      // if (type.length === 0) {
+      //   this.toast('请选择考试类型')
+      //   return
+      // }
+
+      // if (subject.length === 0) {
+      //   this.toast('请填写考试科目')
+      //   return
+      // }
+
+      // if (!org) {
+      //   this.toast('请填写制定机构')
+      //   return
+      // }
+
+      if (org && org.length > 16) {
+        this.toast('制定机构只能在16个字以内')
         return
       }
 
-      if (subject.length === 0) {
-        this.toast('请填写考试科目')
-        return
-      }
+      // if (!ksStartTime || !ksEndTime) {
+      //   this.toast('请选择考试时间')
+      //   return
+      // }
 
-      if (!org) {
-        this.toast('请填写制定机构')
-        return
-      }
-
-      if (!ksStartTime || !ksEndTime) {
-        this.toast('请选择考试时间')
-        return
-      }
-
-      if (!bmStartTime || !bmEndTime) {
-        this.toast('请选择报名时间')
-        return
-      }
+      // if (!bmStartTime || !bmEndTime) {
+      //   this.toast('请选择报名时间')
+      //   return
+      // }
       if (!dxcode) {
         this.toast('请填写验证码')
         return
@@ -722,22 +756,26 @@ export default {
     },
     freeStudentApi () {
       let { name, idCard, level } = this.formObj[5]
-      if (!name) {
-        this.toast('请填写姓名')
+      // if (!name) {
+      //   this.toast('请填写姓名')
+      //   return
+      // }
+      if (name && name.length > 5) {
+        this.toast('姓名不能超过5个字')
         return
       }
-      if (!idCard) {
-        this.toast('请填写身份证')
-        return
-      }
-      if (!idCardMatch.test(idCard)) {
+      // if (!idCard) {
+      //   this.toast('请填写身份证')
+      //   return
+      // }
+      if (idCard && !idCardMatch.test(idCard)) {
         this.toast('身份证格式不正确')
         return
       }
-      if (!level) {
-        this.toast('请选择报考等级')
-        return
-      }
+      // if (!level) {
+      //   this.toast('请选择报考等级')
+      //   return
+      // }
       //请求接口
     }
   },
@@ -747,14 +785,28 @@ export default {
   },
   mounted () {
 
+
   },
-  beforeCreate () { },
-  beforeMount () { },
+  beforeCreate () {
+
+  },
+  beforeMount () {
+
+  },
   beforeUpdate () { },
   updated () { },
-  beforeDestroy () { },
-  destroyed () { },
-  activated () { },
+  beforeDestroy () {
+
+  },
+  destroyed () {
+
+  },
+  activated () {
+
+  },
+  deactivated () {
+
+  }
 }
 </script>
 <style lang='less' scoped>
@@ -797,6 +849,11 @@ export default {
             text-align: center;
           }
         }
+      }
+
+      .wrap {
+        line-height: 50px;
+        text-align: left;
       }
     }
   }

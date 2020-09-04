@@ -21,5 +21,6 @@ const videoMatch = /(.*)\.(mp4)$/
 //至少一个汉字，且汉字开头
 const charMatch = /^[\u4e00-\u9fa5]/
 
-
-export { phoneMatch, idCardMatch, passwordMatch, usernameMatch, imgMatch, charMatch, videoMatch }
+// 数字+大写字母 20位
+const certificateMatch = /^[A-Z0-9]{20}$/
+export { phoneMatch, idCardMatch, passwordMatch, usernameMatch, imgMatch, charMatch, videoMatch, certificateMatch }

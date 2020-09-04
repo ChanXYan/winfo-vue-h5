@@ -1,7 +1,7 @@
-<!-- 免考生详情 -->
+<!-- 1船员证书 2船员成绩 详情 -->
 <template>
   <div class="container">
-    <div class="list">
+    <div class="list" v-if="type===1">
       <van-divider
         class="line"
         :style="{ color: '#B2B2B2', borderColor: '#DBDBDB', padding: '0 16px' }"
@@ -53,6 +53,58 @@
         </div>
       </div>
     </div>
+    <div class="list" v-if="type===2">
+      <van-divider
+        class="line"
+        :style="{ color: '#B2B2B2', borderColor: '#DBDBDB', padding: '0 16px' }"
+      >合格证考试成绩</van-divider>
+      <div
+        v-for="(item,index) in info.hgz"
+        :key="'hgz'+index"
+        @click="clickItem(item)"
+        class="item"
+      >
+        <div class="top">{{item.title}}</div>
+        <div class="content">
+          <div class="left">
+            <div class="item mb20">
+              <span>考试科目：</span>
+              <div class="value">{{item.idcard}}</div>
+            </div>
+            <div class="item">
+              <span>考试成绩：</span>
+              <div class="value">{{item.level}}</div>
+            </div>
+          </div>
+          <div class="right">详情</div>
+        </div>
+      </div>
+      <van-divider
+        class="line"
+        :style="{ color: '#B2B2B2', borderColor: '#DBDBDB', padding: '0 16px',marginTop:'-10px' }"
+      >适任考试成绩</van-divider>
+      <div
+        v-for="(item,index) in info.hgzxm"
+        :key="'item'+index"
+        @click="clickItem(item)"
+        class="item"
+      >
+        <div class="top">{{item.title}}</div>
+        <div class="content">
+          <div class="left">
+            <div class="item mb20">
+              <span>考试科目：</span>
+              <div class="value">{{item.idcard}}</div>
+            </div>
+            <div class="item">
+              <span>考试成绩：</span>
+              <div class="value">{{item.level}}</div>
+            </div>
+          </div>
+          <div class="right">详情</div>
+        </div>
+      </div>
+    </div>
     <alertDetail :type="7" :show="showDetail" @close="showDetail=false"></alertDetail>
   </div>
 </template>
@@ -68,6 +120,7 @@ export default {
     //这里存放数据
     return {
       showDetail: false,
+      type: 1,
       info: {
         hgz: [{
           title: 'PKB201501626',
@@ -111,7 +164,7 @@ export default {
 
   },
   mounted () {
-
+    this.type = +this.$route.query.type
   },
   beforeCreate () { },
   beforeMount () { },
@@ -119,7 +172,6 @@ export default {
   updated () { },
   beforeDestroy () { },
   destroyed () { },
-  activated () { },
 }
 </script>
 <style lang='less' scoped>
@@ -174,6 +226,10 @@ export default {
         }
       }
     }
+  }
+
+  .van-divider {
+    margin: 0;
   }
 }
 </style>
