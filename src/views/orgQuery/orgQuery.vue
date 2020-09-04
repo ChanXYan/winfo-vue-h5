@@ -99,7 +99,7 @@
         <div class="item">
           <span>培训项目名称</span>
           <div class="value" @click="showTraining= true">
-            {{param[2].training ||'请选择'}}
+            {{param[2].trainingName ||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
@@ -155,7 +155,7 @@
     <!-- 培训项目 -->
     <queryPicker
       :show="showTraining"
-      :type="3"
+      :type="4"
       :list="trainingList"
       :values="param[2].training"
       @close="showTraining=false"
@@ -187,7 +187,8 @@ export default {
         province: '',
         jurisdiction: ''
       }, {
-        training: ''
+        trainingName: '',
+        training: ['']
       }],
       orgNames: ['111', '121', '231', '213123', '321213', 'dsa', 'sad'],
       keyword: '',
@@ -202,7 +203,27 @@ export default {
       showJurisdiction: false,
       jurisdictionList: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
       showTraining: false,
-      trainingList: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
+      trainingList: [
+        {
+          title: '海船考试类型',
+          list: [{
+            label: '船长和高级船员适任考试',
+            value: '1'
+          }, {
+            label: '普通和高级船员适任考试',
+            value: '2'
+          }, {
+            label: 'GMDSS适任考试',
+            value: '3'
+          }, {
+            label: '非自航船适任考试',
+            value: '4'
+          }, {
+            label: '海港引航员适任考试',
+            value: '5'
+          }]
+        },
+      ],
     };
   },
   computed: {
@@ -225,7 +246,18 @@ export default {
       this.showJurisdiction = false
     },
     onConfirmTraining (value) {
-      this.param[2].training = value
+      this.param[2].training = value;
+      if (!value.length) {
+        this.param[2].trainingName = ''
+        return
+      }
+      for (const v of this.trainingList) {
+        const target = v.list.find(item => item.value == value)
+        if (target) {
+          this.param[2].trainingName = target.label
+          break
+        }
+      }
       this.showTraining = false
     },
     queryData (type) {
