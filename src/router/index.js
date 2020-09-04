@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 Vue.use(VueRouter)
 
@@ -96,7 +97,7 @@ const routes = [
   {
     path: "/crewCertificate",
     name: "crewCertificate",
-    meta: { title: '船员证书' },
+    meta: { title: '船员证书', keepAlive: true, },
     component: () => import('../views/qualifyQuery/crewCertificate.vue')
   },
   {
@@ -117,7 +118,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title === undefined ? 'Winfo H5' : to.meta.title
   if (to.path !== from.path) {
-    // NProgress.start() //进度条加载
+    NProgress.start() //进度条加载
   }
 
   // 处理keepAlive页面缓存的 副作用
@@ -134,7 +135,7 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach(() => {
-  // NProgress.done() //进度条结束
+  NProgress.done() //进度条结束
 })
 
 export default router

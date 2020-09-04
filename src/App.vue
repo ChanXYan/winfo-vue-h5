@@ -1,9 +1,11 @@
 <template>
   <div id="app">
-    <keep-alive v-if="$route.meta.keepAlive">
-      <router-view :key="$route.fullPath" />
-    </keep-alive>
-    <router-view v-if="!$route.meta.keepAlive" />
+    <transition :name="transitionName">
+      <keep-alive v-if="$route.meta.keepAlive">
+        <router-view :key="$route.fullPath" />
+      </keep-alive>
+      <router-view v-if="!$route.meta.keepAlive" />
+    </transition>
   </div>
 </template>
 
@@ -11,7 +13,7 @@
 export default {
   data () {
     return {
-
+      transitionName: 'fade'
     }
   }
 }
@@ -25,5 +27,11 @@ export default {
   font-size: 16px;
   width: 750px;
   margin: 0 auto;
+}
+.fade-enter {
+  opacity: 0;
+}
+.fade-enter-active {
+  transition: opacity 0.7s;
 }
 </style>
