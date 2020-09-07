@@ -38,7 +38,7 @@
           <div class="value">
             <van-field v-model="formObj[0].dxcode" clearable placeholder="请输入验证码" />
           </div>
-          <img :src="require('../../assets/imgs/404.png')" alt />
+          <img v-lazy="dxcodeImg" @click="getDxcodeImg" alt />
         </div>
       </div>
       <van-button class="query-btn" type="primary" @click="onComfirm">查询</van-button>
@@ -81,7 +81,7 @@
           <div class="value">
             <van-field v-model="formObj[1].dxcode" clearable placeholder="请输入验证码" />
           </div>
-          <img :src="require('../../assets/imgs/404.png')" alt />
+          <img v-lazy="dxcodeImg" @click="getDxcodeImg" alt />
         </div>
       </div>
       <van-button class="query-btn" type="primary" @click="onComfirm">查询</van-button>
@@ -150,7 +150,7 @@
           <div class="value">
             <van-field v-model="formObj[2].dxcode" clearable placeholder="请输入验证码" />
           </div>
-          <img :src="require('../../assets/imgs/404.png')" alt />
+          <img v-lazy="dxcodeImg" @click="getDxcodeImg" alt />
         </div>
       </div>
 
@@ -294,6 +294,7 @@
 </template>
 
 <script>
+import api from '../../api'
 import alertDetail from '../../components/orgQuery/alertDetail'
 import { idCardMatch, certificateMatch } from '../../utils/matchStr'
 import { format } from 'date-fns'
@@ -465,7 +466,7 @@ export default {
     //这里存放数据
     return {
       tabs,
-      active: 1,
+      active: 0,
       examList,
       ycsList,
       formObj: {
@@ -499,6 +500,7 @@ export default {
         }
 
       },
+      dxcodeImg: '',
       certifyTypeList,
       showExamType: false,
       examTypeList,
@@ -535,7 +537,6 @@ export default {
   },
   watch: {
     $route (to, from) {
-      console.log(to, from)
       const hasCatchPage = ['crewCertificate', 'showPdf']
       if (to.name === 'qualifyQuery' && !hasCatchPage.includes(from.name)) {
         // 不从详情进来的页面， 都是初始化参数
@@ -573,6 +574,7 @@ export default {
         }
       }
     },
+
   },
   methods: {
     /**
@@ -600,8 +602,29 @@ export default {
         }
       })
     },
+    //获取验证码
+    getDxcodeImg () {
+      api.getValidateImage().then(res => {
+        console.log(res)
+        let temp = this.transformArrayBufferToBase64(res)
+        this.dxcodeImg = `data:image/png;base64,${temp}`
+      })
+    },
+    //转  ArrayBuffer 成 base64
+    transformArrayBufferToBase64 (buffer) {
+      let binary = '';
+      let bytes = new Uint8Array(buffer);
+      for (var len = bytes.byteLength, i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return window.btoa(binary);
+    },
     changeTab () {
-      this.idCard = ''
+      console.log(this.active, typeof this.active)
+      let filterList = [0, 1, 2]
+      if (filterList.includes(this.active)) {
+        this.getDxcodeImg()
+      }
     },
 
     chooseBmDate (e) {
@@ -777,7 +800,7 @@ export default {
       //   return
       // }
       //请求接口
-    }
+    },
   },
 
   created () {
@@ -802,7 +825,7 @@ export default {
 
   },
   activated () {
-
+    this.getDxcodeImg()
   },
   deactivated () {
 
