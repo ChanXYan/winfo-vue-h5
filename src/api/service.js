@@ -117,6 +117,37 @@ instance.interceptors.response.use(
   }
 )
 
+// 第三方接口
+let msaInstance = axios.create({
+  baseUrl,
+  timeout: 60000,
+})
+
+msaInstance.interceptors.request.use(
+  (config) => {
+
+    window.$loading && window.$loading()
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+msaInstance.interceptors.response.use(
+  (response) => {
+    window.hideToast && window.hideToast()
+
+    return response.data
+  },
+  (error) => {
+    window.hideToast && window.hideToast()
+    return {
+      code: 500,
+      msg: '请求超时'
+    }
+    Promise.reject(error)
+  }
+)
+
+
 function toAuth (msg) {
   alertInstance = Alert(msg, '前往授权', [
     { text: '取消', onPress: () => alertInstance.close(), style: 'default' },
@@ -152,5 +183,14 @@ export default {
   },
   filePost (url, params = {}, headers = {}, $loading = true) {
     return instance.post(url, params)
-  }
+  },
+  msaGet (url, params = {}, headers = {}, $loading = true, config = {}) {
+    return msaInstance.get(url, {
+      params,
+      headers,
+      $loading,
+      ...config
+    })
+
+  },
 }

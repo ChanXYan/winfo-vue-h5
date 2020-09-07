@@ -17,6 +17,13 @@ module.exports = {
         pathRewrite: {
           '^/api': ''
         }
+      },
+      '/msa': {
+        target: 'https://cyxx.msa.gov.cn/crew_qey/qry/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/msa': ''
+        }
       }
     }
   },
