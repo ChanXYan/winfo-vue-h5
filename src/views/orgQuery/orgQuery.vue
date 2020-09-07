@@ -18,14 +18,14 @@
         <div class="item">
           <span>许可资质</span>
           <div class="value" @click="showQualification= true">
-            {{param[0].qualification ||'请选择'}}
+            {{param[0].qualificationName ||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
         <div class="item">
           <span>所在省份</span>
           <div class="value" @click="showProvince= true">
-            {{param[0].province ||'请选择'}}
+            {{provinceNames[0] ||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
@@ -52,20 +52,20 @@
         <div class="item">
           <span>有效标志</span>
           <div class="value checkbox">
-            <van-checkbox v-model="param[1].validFlag">有效</van-checkbox>
+            <van-checkbox v-model="param[1].valid">有效</van-checkbox>
           </div>
         </div>
         <div class="item">
           <span>单位所在省份</span>
           <div class="value" @click="showProvince= true">
-            {{param[1].province ||'请选择'}}
+            {{provinceNames[1] ||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
         <div class="item">
           <span>辖区</span>
           <div class="value" @click="showJurisdiction= true">
-            {{param[1].jurisdiction ||'请选择'}}
+            {{jurisdictionName ||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
@@ -73,19 +73,19 @@
         <div class="item">
           <span>一检两证</span>
           <div class="value checkbox">
-            <van-checkbox v-model="param[1].openTwo">开启</van-checkbox>
+            <van-checkbox v-model="param[1].oneCheckTwo">开启</van-checkbox>
           </div>
         </div>
 
         <div class="item">
           <span>请输入验证码</span>
           <div class="value verif">
-            <van-field v-model="param[1].verif" />
-            <img class="verif-img" src="../../assets/imgs/code.jpg" />
+            <van-field v-model="param[1].code" />
+            <img class="verif-img" v-lazy="dxcodeImg" @click="getDxcodeImg" alt />
           </div>
         </div>
       </div>
-      <van-button class="query-btn" type="primary" @click="queryData(active)">查询</van-button>
+      <van-button class="query-btn" type="primary" @click="getExaminationData(param[1])">查询</van-button>
     </div>
 
     <div v-if="active === 2" class="content">
@@ -99,14 +99,14 @@
         <div class="item">
           <span>培训项目名称</span>
           <div class="value" @click="showTraining= true">
-            {{param[2].trainingName ||'请选择'}}
+            {{trainingName ||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
         <div class="item">
           <span>所在省份</span>
           <div class="value" @click="showProvince= true">
-            {{param[2].province ||'请选择'}}
+            {{provinceNames[2] ||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
@@ -114,12 +114,12 @@
         <div class="item">
           <span>请输入验证码</span>
           <div class="value verif">
-            <van-field v-model="param[2].verif" />
-            <img class="verif-img" src="../../assets/imgs/code.jpg" />
+            <van-field v-model="param[2].code" />
+            <img class="verif-img" v-lazy="dxcodeImg" @click="getDxcodeImg" alt />
           </div>
         </div>
       </div>
-      <van-button class="query-btn" type="primary" @click="queryData(active)">查询</van-button>
+      <van-button class="query-btn" type="primary" @click="getExaminationData(param[2])">查询</van-button>
     </div>
 
     <!-- 资质picker -->
@@ -128,6 +128,7 @@
         title
         show-toolbar
         :columns="qualificationList"
+        value-key="label"
         @confirm="onConfirmshowQualification"
         @cancel="showQualification=false"
       />
@@ -138,6 +139,7 @@
         title
         show-toolbar
         :columns="provinceList"
+        value-key="label"
         @confirm="onConfirmProvince"
         @cancel="showProvince=false"
       />
@@ -148,6 +150,7 @@
         title
         show-toolbar
         :columns="jurisdictionList"
+        value-key="label"
         @confirm="onConfirmJurisdiction"
         @cancel="showJurisdiction=false"
       />
@@ -185,47 +188,27 @@ export default {
       }, {
         // 体检机构
         validFlag: true,
-        openTwo: false,
-        province: '',
-        jurisdiction: ''
       }, {
-        trainingName: '',
         training: ['']
       }],
-      orgNames: ['111', '121', '231', '213123', '321213', 'dsa', 'sad'],
+      orgNames: [],
       keyword: '',
       isFocus: false,
       selected: [],
       orgNameObj: {},
       // picker数组
       showQualification: false,
-      qualificationList: ['甲级服务机构', '乙级服务机构', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州', '杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
+      qualificationName: '',
+      qualificationList: [],
       showProvince: false,
-      provinceList: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
+      provinceNames: ['', '', ''],
+      provinceList: [],
       showJurisdiction: false,
-      jurisdictionList: ['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华', '衢州'],
+      jurisdictionList: [],
+      jurisdictionName: '',
       showTraining: false,
-      trainingList: [
-        {
-          title: '海船考试类型',
-          list: [{
-            label: '船长和高级船员适任考试',
-            value: '1'
-          }, {
-            label: '普通和高级船员适任考试',
-            value: '2'
-          }, {
-            label: 'GMDSS适任考试',
-            value: '3'
-          }, {
-            label: '非自航船适任考试',
-            value: '4'
-          }, {
-            label: '海港引航员适任考试',
-            value: '5'
-          }]
-        },
-      ],
+      trainingName: '',
+      trainingList: [],
     };
   },
   computed: {
@@ -235,28 +218,31 @@ export default {
     }
   },
   methods: {
-    onConfirmshowQualification (value) {
+    onConfirmshowQualification ({ label, value }) {
+      this.qualificationName = label
       this.param[0].qualification = value
       this.showQualification = false
     },
-    onConfirmProvince (value) {
-      this.param[this.active].province = value
+    onConfirmProvince ({ label, value }) {
+      this.provinceNames[this.active] = label
+      this.param[this.active].provinceCode = value
       this.showProvince = false
     },
-    onConfirmJurisdiction (value) {
+    onConfirmJurisdiction ({ label, value }) {
+      this.jurisdictionName = label
       this.param[1].jurisdiction = value
       this.showJurisdiction = false
     },
     onConfirmTraining (value) {
       this.param[2].training = value;
       if (!value.length) {
-        this.param[2].trainingName = ''
+        this.trainingName = ''
         return
       }
       for (const v of this.trainingList) {
         const target = v.list.find(item => item.value == value)
         if (target) {
-          this.param[2].trainingName = target.label
+          this.trainingName = target.label
           break
         }
       }
@@ -279,18 +265,32 @@ export default {
         this.dxcodeImg = `data:image/png;base64,${temp}`
       })
     },
-    getServiceOrg () {
-      const obj = this.param[0]
-      api.getServiceOrg({}).then(res => {
+    getServiceOrg (obj) {
+      this.$router.push({ name: 'orgList', query: { type: 0, ...obj } })
+
+    },
+    getExaminationData (obj) {
+      obj.valid = obj.valid ? 1 : 0
+      obj.oneCheckTwo = obj.oneCheckTwo ? 1 : undefined
+      api.getExaminationData(obj).then(res => {
         console.log(res);
       })
-
-    }
+      obj.code = ''
+    },
+    getOrgDict (obj) {
+      api.getOrgDict(obj).then(({ datas }) => {
+        this.trainingList = datas.list1
+        this.provinceList = datas.list2
+        this.qualificationList = datas.list3
+        this.jurisdictionList = datas.list4
+      })
+    },
   },
   watch: {
 
   },
   mounted () {
+    this.getOrgDict()
     this.getDxcodeImg()
   },
   activated () {
