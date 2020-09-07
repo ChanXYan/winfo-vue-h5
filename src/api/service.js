@@ -20,7 +20,7 @@ axios.interceptors.request.use(
     if ((config.method === 'get' || config.method === 'delete') && config.$loading) {
 
 
-      window.$loading && window.$loading()
+      config.$loading && window.$loading()
     }
 
     if (config.method === 'post') {
@@ -126,7 +126,7 @@ let msaInstance = axios.create({
 msaInstance.interceptors.request.use(
   (config) => {
 
-    window.$loading && window.$loading()
+    config.$loading && window.$loading()
     return config
   },
   (error) => Promise.reject(error)

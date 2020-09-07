@@ -12,7 +12,7 @@ module.exports = {
     proxy: {
       '/api': {
         // target: "http://localhost:3333/h5/",
-        target: "https://m.winfo.pub/sz/",
+        target: "https://m.winfo.pub/",
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''

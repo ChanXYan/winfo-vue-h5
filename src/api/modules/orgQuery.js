@@ -9,6 +9,6 @@ export default {
   },
   // 服务/外派机构查询
   getServiceOrg (data) {
-    return service.get(`${preUrl}basics-program/maritime/getServiceOrg`, data)
+    return service.get(`${preUrl}rest/basics-program/maritime/getServiceOrg`, data)
   },
 }

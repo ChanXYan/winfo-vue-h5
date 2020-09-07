@@ -4,12 +4,12 @@ import { preUrl, msaUrl } from '../config'
 export default {
   getUrlConfig (data) {
     return service.get(
-      `${preUrl}sz-mini-program/admin/createJsapiSignature`, data)
+      `${preUrl}sz/sz-mini-program/admin/createJsapiSignature`, data)
   },
   // 获取验证码图片
   getValidateImage () {
-    return service.get(
-      `${msaUrl}getValidateImage.action`, {}, {}, true, {
+    return service.msaGet(
+      `${msaUrl}getValidateImage.action`, {}, {}, false, {
       'responseType': 'arraybuffer'
     })
   }
