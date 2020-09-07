@@ -34,11 +34,11 @@
           <span>请输入验证码</span>
           <div class="value verif">
             <van-field v-model="param[0].verif" />
-            <img class="verif-img" src="../../assets/imgs/code.jpg" />
+            <img class="verif-img" @click="getDxcodeImg" :src="dxcodeImg" alt />
           </div>
         </div>
       </div>
-      <van-button class="query-btn" type="primary" @click="queryData(active)">查询</van-button>
+      <van-button class="query-btn" type="primary" @click="getServiceOrg()">查询</van-button>
     </div>
 
     <div v-if="active === 1" class="content">
@@ -165,8 +165,9 @@
 </template>
 
 <script>
-import queryPicker from '../../components/queryPicker'
-import autocomplete from '../../components/autocomplete'
+import api from '@/api'
+import queryPicker from '@/components/queryPicker'
+import autocomplete from '@/components/autocomplete'
 
 export default {
   name: 'OrgQueryPage',
@@ -177,6 +178,7 @@ export default {
       show: false,
       loading: false,
       finished: false,
+      dxcodeImg: '',
       param: [{
         org: '',
         qualification: ''
@@ -263,16 +265,33 @@ export default {
     queryData (type) {
       console.log(type);
     },
+    transformArrayBufferToBase64 (buffer) {
+      let binary = '';
+      let bytes = new Uint8Array(buffer);
+      for (var len = bytes.byteLength, i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return window.btoa(binary);
+    },
+    getDxcodeImg () {
+      api.getValidateImage().then(res => {
+        let temp = this.transformArrayBufferToBase64(res)
+        this.dxcodeImg = `data:image/png;base64,${temp}`
+      })
+    },
+    getServiceOrg () {
+      const obj = this.param[0]
+      api.getServiceOrg({}).then(res => {
+        console.log(res);
+      })
 
-  },
-  created () {
-
-
+    }
   },
   watch: {
 
   },
   mounted () {
+    this.getDxcodeImg()
   },
   activated () {
 
