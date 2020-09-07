@@ -45,6 +45,7 @@
       @close="show4=false"
       @onComfirm="onComfirm3"
     ></queryPicker>
+    <img @click="getDxcodeImg" :src="dxcodeImg" alt />
     <div>
       1
       <br />1
@@ -136,6 +137,7 @@
 </template>
 
 <script>
+import api from '../../api'
 import queryPicker from '../../components/queryPicker'
 export default {
   components: {
@@ -147,6 +149,7 @@ export default {
       show2: false,
       show3: false,
       show4: false,
+      dxcodeImg: '',
       values: [1, 2],
       values1: ['2'],
       values2: ['1'],
@@ -285,6 +288,20 @@ export default {
     onComfirm3 (o) {
       this.values3 = [...o]
     },
+    transformArrayBufferToBase64 (buffer) {
+      let binary = '';
+      let bytes = new Uint8Array(buffer);
+      for (var len = bytes.byteLength, i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return window.btoa(binary);
+    },
+    getDxcodeImg () {
+      api.getValidateImage().then(res => {
+        let temp = this.transformArrayBufferToBase64(res)
+        this.dxcodeImg = `data:image/png;base64,${temp}`
+      })
+    }
   },
   created () {
 
@@ -294,7 +311,7 @@ export default {
 
   },
   mounted () {
-
+    this.getDxcodeImg()
   },
   activated () {
 
