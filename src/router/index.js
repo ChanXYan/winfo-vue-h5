@@ -46,7 +46,7 @@ const routes = [
     name: "navWarning",
     meta: {
       title: '航行警告',
-      keepAlive: false,
+      keepAlive: true,
     },
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/securityInformation/navWarning.vue')
@@ -54,7 +54,7 @@ const routes = [
   {
     path: "/navWarningDetail",
     name: "navWarningDetail",
-    meta: { title: '航行警告详情', },
+    meta: { title: '航行警告详情', keepAlive: true, },
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/securityInformation/navWarningDetail.vue')
   },

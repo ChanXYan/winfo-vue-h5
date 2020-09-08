@@ -243,3 +243,10 @@ mounted
 //离开页面
 beforeDestroy
 destroyed
+
+#### 发版注意
+```
+<meta name="referrer" content="never">
+// 在服务器配置第三方接口（https开头） 遇到这个问题（而本地是localhost或者http配置了代理 因此没遇到这个问题） ）
+referrer 第三方接口 加了图片防盗链 因此加上这句话后 发布后就可以正常了
+```

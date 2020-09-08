@@ -8,25 +8,17 @@ axios.defaults.timeout = 10000 //普遍接口超时时间 设置为10s
 
 axios.interceptors.request.use(
   (config) => {
-    // config.headers['Authorization'] = window.ls.get('token')
-    //   ? 'Bearer ' + window.ls.get('token')
-    //   : ''
+
+    if (window.ls.get('token')) {
+      config.headers['Authorization'] = 'Bearer ' + window.ls.get('token')
+    }
 
     if (config.headers['delToken']) {
       delete config.headers['Authorization']
       delete config.headers['delToken']
     }
 
-    if ((config.method === 'get' || config.method === 'delete') && config.$loading) {
-
-
-      config.$loading && window.$loading()
-    }
-
-    if (config.method === 'post') {
-      config[0] && window.$loading && window.$loading()
-    }
-
+    config.loading && window.$loading()
     return config
   },
   (error) => Promise.reject(error)
@@ -126,7 +118,7 @@ let msaInstance = axios.create({
 msaInstance.interceptors.request.use(
   (config) => {
 
-    config.$loading && window.$loading()
+    config.loading && window.$loading()
     return config
   },
   (error) => Promise.reject(error)
@@ -163,34 +155,37 @@ function toWeapp () {
 }
 
 export default {
-  get (url, params = {}, headers = {}, $loading = true, config = {}) {
+  get (url, params = {}, headers = {}, loading = true, config = {}) {
     return axios.get(url, {
       params,
       headers,
-      $loading,
+      loading,
       ...config
     })
   },
-  post (url, params = {}, headers = {}, $loading = true) {
-    return axios.post(url, params, $loading)
+  post (url, params = {}, headers = {}, loading = true) {
+    return axios.post(url, params, { headers, loading })
   },
-  delete (url, params = {}, headers = {}, $loading = true) {
+  delete (url, params = {}, headers = {}, loading = true) {
     return axios.delete(url, {
       params,
       headers,
-      $loading,
+      loading,
     })
   },
-  filePost (url, params = {}, headers = {}, $loading = true) {
+  filePost (url, params = {}, headers = {}, loading = true) {
     return instance.post(url, params)
   },
-  msaGet (url, params = {}, headers = {}, $loading = true, config = {}) {
+  msaGet (url, params = {}, headers = {}, loading = true, config = {}) {
     return msaInstance.get(url, {
       params,
       headers,
-      $loading,
+      loading,
       ...config
     })
-
   },
+  msaPost (url, params = {}, headers = {}, loading = true) {
+    return msaInstance.post(url, params, { headers, loading })
+  }
+
 }
