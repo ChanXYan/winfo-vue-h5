@@ -1,7 +1,12 @@
-
 <template>
   <div class="container">
-    <van-tabs class="tabs" v-model="active" color="#0176FF" title-active-color="#0176FF">
+    <van-tabs
+      class="tabs"
+      v-model="active"
+      color="#0176FF"
+      title-active-color="#0176FF"
+      @change="changeTab"
+    >
       <van-tab title="服务/外派机构"></van-tab>
       <van-tab title="体检机构"></van-tab>
       <van-tab title="培训机构"></van-tab>
@@ -11,21 +16,21 @@
       <div class="list">
         <autocomplete
           title="机构名称"
-          v-model="param[0].org"
+          v-model="param[0].orgName"
           placeholder="请输入机构名称"
           :tipList="orgNames"
         />
         <div class="item">
           <span>许可资质</span>
-          <div class="value" @click="showQualification= true">
-            {{param[0].qualificationName ||'请选择'}}
+          <div class="value" @click="showQualification = true">
+            {{ qualificationName || '请选择' }}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
         <div class="item">
           <span>所在省份</span>
-          <div class="value" @click="showProvince= true">
-            {{provinceNames[0] ||'请选择'}}
+          <div class="value" @click="showProvince = true">
+            {{ provinceNames[0] || '请选择' }}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
@@ -38,7 +43,7 @@
           </div>
         </div>
       </div>
-      <van-button class="query-btn" type="primary" @click="getServiceOrg()">查询</van-button>
+      <van-button class="query-btn" type="primary" @click="inquireSever">查询</van-button>
     </div>
 
     <div v-if="active === 1" class="content">
@@ -46,7 +51,7 @@
         <div class="item">
           <span>体检机构名称</span>
           <div class="value">
-            <van-field maxlength="30" v-model="param[1].org" placeholder="请输入机构名称" />
+            <van-field maxlength="30" v-model="param[1].orgName" placeholder="请输入机构名称" />
           </div>
         </div>
         <div class="item">
@@ -57,15 +62,15 @@
         </div>
         <div class="item">
           <span>单位所在省份</span>
-          <div class="value" @click="showProvince= true">
-            {{provinceNames[1] ||'请选择'}}
+          <div class="value" @click="showProvince = true">
+            {{ provinceNames[1] || '请选择' }}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
         <div class="item">
           <span>辖区</span>
-          <div class="value" @click="showJurisdiction= true">
-            {{jurisdictionName ||'请选择'}}
+          <div class="value" @click="showJurisdiction = true">
+            {{ jurisdictionName || '请选择' }}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
@@ -93,20 +98,20 @@
         <div class="item">
           <span>培训机构名称</span>
           <div class="value">
-            <van-field v-model="param[2].org" placeholder="请输入机构名称" />
+            <van-field v-model="param[2].orgName" placeholder="请输入机构名称" />
           </div>
         </div>
         <div class="item">
           <span>培训项目名称</span>
-          <div class="value" @click="showTraining= true">
-            {{trainingName ||'请选择'}}
+          <div class="value" @click="showTraining = true">
+            {{ trainingName || '请选择' }}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
         <div class="item">
           <span>所在省份</span>
-          <div class="value" @click="showProvince= true">
-            {{provinceNames[2] ||'请选择'}}
+          <div class="value" @click="showProvince = true">
+            {{ provinceNames[2] || '请选择' }}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
@@ -121,18 +126,17 @@
       </div>
       <van-button class="query-btn" type="primary" @click="getExaminationData(param[2])">查询</van-button>
     </div>
-
-    <!-- 资质picker -->
-    <van-popup v-model="showQualification" position="bottom">
-      <van-picker
-        title
-        show-toolbar
-        :columns="qualificationList"
-        value-key="label"
-        @confirm="onConfirmshowQualification"
-        @cancel="showQualification=false"
-      />
-    </van-popup>
+    <!-- 资质多选 -->
+    <queryPicker
+      :show="showQualification"
+      :type="3"
+      :isSingle="false"
+      :list="qualificationList"
+      :values="param[0].dwlxarr"
+      propName="dwlxarr"
+      @close="showQualification=false"
+      @onComfirm="onConfirmshowQualification"
+    ></queryPicker>
     <!-- 省份 -->
     <van-popup v-model="showProvince" position="bottom">
       <van-picker
@@ -141,7 +145,7 @@
         :columns="provinceList"
         value-key="label"
         @confirm="onConfirmProvince"
-        @cancel="showProvince=false"
+        @cancel="showProvince = false"
       />
     </van-popup>
     <!-- 辖区 -->
@@ -152,7 +156,7 @@
         :columns="jurisdictionList"
         value-key="label"
         @confirm="onConfirmJurisdiction"
-        @cancel="showJurisdiction=false"
+        @cancel="showJurisdiction = false"
       />
     </van-popup>
     <!-- 培训项目 -->
@@ -161,7 +165,7 @@
       :type="4"
       :list="trainingList"
       :values="param[2].training"
-      @close="showTraining=false"
+      @close="showTraining = false"
       @onComfirm="onConfirmTraining"
     />
   </div>
@@ -182,15 +186,7 @@ export default {
       loading: false,
       finished: false,
       dxcodeImg: '',
-      param: [{
-        org: '',
-        qualification: ''
-      }, {
-        // 体检机构
-        validFlag: true,
-      }, {
-        training: ['']
-      }],
+      param: [{ dwlxarr: [] }, { validFlag: true, }, { training: [''], },],
       orgNames: [],
       keyword: '',
       isFocus: false,
@@ -209,18 +205,24 @@ export default {
       showTraining: false,
       trainingName: '',
       trainingList: [],
-    };
+    }
   },
   computed: {
     matchingOrg () {
-      if (!this.isFocus || !this.param[0].org.length || !this.orgNames.length) return []
-      return this.orgNames.filter(e => e.includes(this.param[0].org))
-    }
+      if (!this.isFocus || !this.param[0].org.length || !this.orgNames.length) {
+        return []
+      }
+      return this.orgNames.filter((e) => e.includes(this.param[0].org))
+    },
   },
   methods: {
-    onConfirmshowQualification ({ label, value }) {
-      this.qualificationName = label
-      this.param[0].qualification = value
+    onConfirmshowQualification (value) {
+      if (!value.length) {
+        this.qualificationName = '请选择'
+        return
+      }
+      this.qualificationName = `已选择${value.length}项`
+      this.param[0].dwlxarr = value.join()
       this.showQualification = false
     },
     onConfirmProvince ({ label, value }) {
@@ -234,13 +236,13 @@ export default {
       this.showJurisdiction = false
     },
     onConfirmTraining (value) {
-      this.param[2].training = value;
+      this.param[2].training = value
       if (!value.length) {
         this.trainingName = ''
         return
       }
       for (const v of this.trainingList) {
-        const target = v.list.find(item => item.value == value)
+        const target = v.list.find((item) => item.value == value)
         if (target) {
           this.trainingName = target.label
           break
@@ -248,62 +250,71 @@ export default {
       }
       this.showTraining = false
     },
-    queryData (type) {
-      console.log(type);
-    },
     transformArrayBufferToBase64 (buffer) {
-      let binary = '';
-      let bytes = new Uint8Array(buffer);
+      let binary = ''
+      let bytes = new Uint8Array(buffer)
       for (var len = bytes.byteLength, i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
+        binary += String.fromCharCode(bytes[i])
       }
-      return window.btoa(binary);
+      return window.btoa(binary)
     },
     getDxcodeImg () {
-      api.getValidateImage().then(res => {
+      api.getValidateImage().then((res) => {
         let temp = this.transformArrayBufferToBase64(res)
         this.dxcodeImg = `data:image/png;base64,${temp}`
       })
     },
-    getServiceOrg (obj) {
-      this.$router.push({ name: 'orgList', query: { type: 0, ...obj } })
-
+    inquireSever () {
+      if (this.param[0].code) {
+        this.toast('请填写验证码')
+        return
+      }
+      this.$router.push({
+        name: 'orgList',
+        query: { type: 1, ...this.param[0] },
+      })
     },
     getExaminationData (obj) {
       obj.valid = obj.valid ? 1 : 0
       obj.oneCheckTwo = obj.oneCheckTwo ? 1 : undefined
-      api.getExaminationData(obj).then(res => {
-        console.log(res);
-      })
+
       obj.code = ''
     },
     getOrgDict (obj) {
-      api.getOrgDict(obj).then(({ datas }) => {
-        this.trainingList = datas.list1
-        this.provinceList = datas.list2
-        this.qualificationList = datas.list3
-        this.jurisdictionList = datas.list4
-      })
+      const dict = JSON.parse(sessionStorage.getItem('orgDict'))
+      if (dict) {
+        this.trainingList = dict.list1
+        this.provinceList = dict.list2
+        this.qualificationList = dict.list3
+        this.jurisdictionList = dict.list4
+      } else {
+        api.getOrgDict(obj).then(({ datas }) => {
+          sessionStorage.setItem('orgDict', JSON.stringify(datas))
+          this.trainingList = datas.list1
+          this.provinceList = datas.list2
+          this.qualificationList = datas.list3
+          this.jurisdictionList = datas.list4
+        })
+      }
     },
+    changeTab () {
+      this.param[this.active].code = ''
+    }
   },
-  watch: {
-
-  },
+  watch: {},
   mounted () {
     this.getOrgDict()
     this.getDxcodeImg()
   },
   activated () {
-
-
+    this.getDxcodeImg()
   },
   beforeDestroy () {
   },
   destroyed () { },
-
 }
 </script>
-<style lang='less' scoped>
+<style lang="less" scoped>
 .container {
   width: 100vw;
   height: 100vh;
