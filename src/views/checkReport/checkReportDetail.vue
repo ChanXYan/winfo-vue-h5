@@ -178,30 +178,31 @@ export default {
     // this.init()
   },
   activated () {
-    // this.init()
-    let { mmsi, endTime, type } = this.$route.query
-    let params = {
-      keyword: mmsi,
-      endTime
-    }
-    if (+type === 1) {
-      this.fscDetailApi(params)
-    } else {
-      this.siteDetailApi(params)
-    }
+    this.init()
+    //小程序分享 通过参数请求接口获取数据
+    // let { mmsi, endTime, type } = this.$route.query
+    // let params = {
+    //   keyword: mmsi,
+    //   endTime
+    // }
+    // if (+type === 1) {
+    //   this.fscDetailApi(params)
+    // } else {
+    //   this.siteDetailApi(params)
+    // }
 
   },
   mounted () {
 
   },
   methods: {
-    // init () {
-    //   let { activeTab, info, list } = this.ls.get('routeParams')
+    init () {
+      let { activeTab, info, list } = this.ls.get('routeParams')
 
-    //   this.tab = activeTab
-    //   this.info = info
-    //   this.list = list
-    // },
+      this.tab = activeTab
+      this.info = info
+      this.list = list
+    },
     fscDetailApi (params) {
 
       api.shareFlagStateControl(params).then(res => {

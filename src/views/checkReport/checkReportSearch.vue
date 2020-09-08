@@ -14,6 +14,7 @@
         :min-date="new Date(2012, 0, 1)"
         v-model="showCalendar"
         type="range"
+        :default-date="[startTime||new Date(),endTime||new Date()]"
         color="#07c160"
         @confirm="chooseDate"
       />
@@ -22,11 +23,13 @@
         <div class="times">
           <div class="timeChoose" @click="showCalendar = true">
             <span class="iconfont iconcalendar"></span>
-            <p class="time">{{startTime || '开始时间'}}</p>
+            <p class="time">{{start || '开始时间'}}</p>
             <p class="mr10 ml10">-</p>
-            <p class="time">{{endTime || '结束时间'}}</p>
+            <p class="time">{{end || '结束时间'}}</p>
           </div>
-
+          <div class="p20 close" @click="startTime='';endTime=''">
+            <van-icon v-if="startTime && endTime" class="pl20 pr20" name="clear" />
+          </div>
           <div class="search" @click="search">搜索</div>
         </div>
       </div>
@@ -131,28 +134,44 @@ export default {
       type: 'history',//history result
     }
   },
+  computed: {
+    start: function () {
+      return this.startTime ? format(this.startTime, 'yyyy-MM-dd') : ''
+    },
+    end: function () {
+      return this.endTime ? format(this.endTime, 'yyyy-MM-dd') : ''
+    },
+  },
   mounted () {
     this.searchHistory()
+  },
+  activated () {
+    let { token } = this.$route.query
+    if (token) {
+      this.ls.set('token', token)
+    }
   },
   methods: {
     clickTab (item) {
       this.activeTab = item.key
-      this.search()
+      this.search(false)
     },
-    search () {
-      this.type = 'result'
-      let { startTime, endTime, keyword, activeTab } = this
+    search (flag = true) {
+      if (flag) {
+        this.type = 'result'
+      }
+      let { start, end, keyword, activeTab } = this
       let params = {
-        startTime: startTime ? startTime + ' 00:00:00' : '',
-        endTime: endTime ? endTime + ' 23:59:59' : '',
+        startTime: start ? start + ' 00:00:00' : '',
+        endTime: end ? end + ' 23:59:59' : '',
         keyword
       }
       activeTab === 1 ? this.fscApi(params) : this.siteApi(params)
     },
     chooseDate (e) {
       let [startTime, endTime] = e
-      this.startTime = format(startTime, 'yyyy-MM-dd')
-      this.endTime = format(endTime, 'yyyy-MM-dd')
+      this.startTime = startTime
+      this.endTime = endTime
       this.showCalendar = false
     },
     clickHistory (item) {
@@ -310,6 +329,7 @@ export default {
         }
         .time {
           width: 220px;
+          text-align: center;
         }
       }
       .search {
