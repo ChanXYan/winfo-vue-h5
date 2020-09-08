@@ -880,6 +880,25 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
+"@better-scroll/core@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@better-scroll/core/-/core-2.0.2.tgz#0cd1870d5c6a3307201d2ae0a5650f0599b0eaf8"
+  integrity sha512-4EZj4mU8s3e2bfemL17giR79mIrh6+N0fzrznDH4ytZCwkPvARVAiPRCzVHc9QN8yJoKSWTysLoIoaKfWPXaUQ==
+  dependencies:
+    "@better-scroll/shared-utils" "^2.0.2"
+
+"@better-scroll/pull-up@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@better-scroll/pull-up/-/pull-up-2.0.2.tgz#c15301303568191a2b1e66cefd2c50911301c432"
+  integrity sha512-IC67/5+X2jjHQzfaKuA1qxcBrQMOYFotL239X2bcjGvUmvc0V8Omy0qibjRlIagT+4v8MsNcy4lxSTawjg+TyA==
+  dependencies:
+    "@better-scroll/core" "^2.0.2"
+
+"@better-scroll/shared-utils@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@better-scroll/shared-utils/-/shared-utils-2.0.2.tgz#3b08aa9724615fc5dcd60cf953d77022b33f399d"
+  integrity sha512-7IIoFbpA8eR22o44q039D3s+35mCcEzl1o7vXHGaSJY8+kEBYOVOF9gOUure2w2lAhbd387GPMM3JB01p8Y4pA==
+
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
   resolved "https://registry.npm.taobao.org/@cnakazawa/watch/download/@cnakazawa/watch-1.0.4.tgz#f864ae85004d0fcab6f50be9141c4da368d1656a"

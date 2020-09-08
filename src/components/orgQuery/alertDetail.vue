@@ -4,43 +4,44 @@
     <div class="alertDetail">
       <div class="top">
         <span :class="[ 'iconfont', iconObj[type],'mr20' ]"></span>
-        {{info.company}}
+        {{info.orgName}}
         <van-icon class="close p30" name="cross" size="20" @click="onclose" />
       </div>
+      <!-- 服务/外派机构 -->
       <div v-if="type=== 1" class="content">
         <div class="contentWrap">
           <ul class="info">
             <li>
               <span>联系人：</span>
-              <p>{{info.person}}</p>
+              <p>{{info.linkMan}}</p>
             </li>
             <li>
               <span>办公电话：</span>
-              <p>{{info.phone}}</p>
+              <p>{{info.officePhone}}</p>
             </li>
             <li>
               <span>机构地址：</span>
-              <p>{{info.address}}</p>
+              <p>{{info.orgAddr}}</p>
             </li>
             <li>
               <span>邮政编码：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.postalCode}}</p>
             </li>
           </ul>
 
-          <ul class="lists" v-for="(item,index) in info.list" :key="'item'+index">
+          <ul class="lists" v-for="item in info.list" :key="item.cy_dwlx">
             <li>
               <div class="top">{{item.org}}</div>
               <ul class="ct">
-                <li>主管海事机构：{{item.mainorg}}</li>
-                <li>许可资质批准日期：{{item.time1}}</li>
-                <li>许可资质有效日期：{{item.time2}}</li>
+                <li>主管海事机构：{{item.briefName}}</li>
+                <li>许可资质批准日期：{{item.cy_qfrqStr}}</li>
+                <li>许可资质有效日期：{{item.cy_jzrqStr}}</li>
               </ul>
             </li>
           </ul>
         </div>
       </div>
-
+      <!-- 体检机构 -->
       <div v-if="type=== 2" class="content">
         <div class="contentWrap">
           <ul class="info">
@@ -71,7 +72,7 @@
           </ul>
         </div>
       </div>
-
+      <!-- 培训机构 -->
       <div v-if="type=== 3" class="content">
         <div class="contentWrap">
           <ul class="info">
@@ -287,30 +288,35 @@ export default {
     type: {
       type: Number,
       default: 4
+    },
+    info: {
+      type: Object,
+      default: () => {
+        return {
+          company: '深圳中海船员管理有限公司',
+          person: '答晓旭',
+          phone: '0755-26880978; 0755-26885435',
+          address: '广东省深圳市南山区南海大道1052号海翔广场303室',
+          post: '518067',
+          list: [{
+            org: '甲级服务机构',
+            mainorg: '天津海事局',
+            time1: '2018-03-02',
+            time2: '2022-02-02'
+          }, {
+            org: '甲级服务机构2',
+            mainorg: '天津海事局',
+            time1: '2018-03-02',
+            time2: '2022-02-02'
+          }]
+        }
+      }
     }
   },
   data () {
     //这里存放数据
     return {
       iconObj,
-      info: {
-        company: '深圳中海船员管理有限公司',
-        person: '答晓旭',
-        phone: '0755-26880978; 0755-26885435',
-        address: '广东省深圳市南山区南海大道1052号海翔广场303室',
-        post: '518067',
-        list: [{
-          org: '甲级服务机构',
-          mainorg: '天津海事局',
-          time1: '2018-03-02',
-          time2: '2022-02-02'
-        }, {
-          org: '甲级服务机构2',
-          mainorg: '天津海事局',
-          time1: '2018-03-02',
-          time2: '2022-02-02'
-        }]
-      },
       // info: {
       //   company: '深圳中海船员管理有限公司',
       //   person: '答晓旭',
@@ -392,8 +398,7 @@ export default {
         }
       }
       .lists {
-        width: 570px;
-        margin: 0 auto;
+        margin: 0 30px;
 
         > li {
           margin-bottom: 15px;
