@@ -106,6 +106,7 @@
 
 <script>
 import { format } from 'date-fns'
+import axios from 'axios'
 import api from '../../api/index'
 import empty from '@/components/empty.vue'
 export default {
@@ -120,6 +121,7 @@ export default {
       showCalendar: false,
       startTime: null,
       endTime: null,
+      apiObj: {},
       tabs: [{
         tab: 'FSC检查',
         key: 1
@@ -179,7 +181,16 @@ export default {
       this.search()
     },
     fscApi (params) {
-      api.flagStateControlQuery(params).then(res => {
+      let { siteApi } = this.apiObj
+      siteApi && siteApi.cancel()
+
+      let self = this
+      api.flagStateControlQuery(params, {
+        cancelToken: new axios.CancelToken(function executor (c) {
+          self.apiObj.fscApi = {}
+          self.apiObj.fscApi.cancel = c
+        })
+      }).then(res => {
         if (res.code === 10000) {
           this.fscList = res.datas.map(item => {
             let { flagStateControl, flagStateControlDetail, flagStateControlDetailList } = item
@@ -191,8 +202,17 @@ export default {
       })
     },
     siteApi (params) {
+      let self = this
 
-      api.siteSupervisionQuery(params).then(res => {
+      let { fscApi } = this.apiObj
+      fscApi && fscApi.cancel()
+
+      api.siteSupervisionQuery(params, {
+        cancelToken: new axios.CancelToken(function executor (c) {
+          self.apiObj.siteApi = {}
+          self.apiObj.siteApi.cancel = c
+        })
+      }).then(res => {
         if (res.code === 10000) {
           this.siteList = res.datas.map(item => {
             let { siteSupervisionDetail, siteSupervisionDetailList, siteSupervisionReport } = item
@@ -255,7 +275,13 @@ export default {
         }
       })
     }
-  }
+  },
+  beforeDestroy () {
+    let { fscApi, siteApi } = this.apiObj
+
+    fscApi.cancel()
+    siteApi.cancel()
+  },
 };
 </script>
 
