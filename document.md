@@ -250,3 +250,60 @@ destroyed
 // 在服务器配置第三方接口（https开头） 遇到这个问题（而本地是localhost或者http配置了代理 因此没遇到这个问题） ）
 referrer 第三方接口 加了图片防盗链 因此加上这句话后 发布后就可以正常了
 ```
+
+### 关于axios中止请求处理
+
+每个页面都可能有几个接口，接口返回时间比较慢
+
+出现场景：
+
+1. 跳转其他页面时 当前页面的接口还在请求中（也就是Pending状态）
+2. 切换tab时 上一个tab请求的数据还没返回，接下来的tab接口也在请求。
+3. 输入框，多次触发搜索时，上一次搜索结果还没返回，下一次的搜索结果提前返回，而上次请求的搜索结果后面返回，会将前面真正的结果给覆盖，非常不友好。（之前用的是比较土的方法，就是通过当前搜索关键字跟搜索结果返回的关键字进行比对，来确定最终要拿到的结果，但是这样并不中断接口请求）
+
+为了结果以上问题
+使用了 axios中止请求
+
+使用方法：
+```
+data(){
+  return {
+    apiObj: {}
+  }
+},
+//================================================================
+
+// 假设有2个tab 切换tab1请求api1（中断api2），切换tab2请求api2（中断api1）
+ api1 (params) {
+      let self = this
+
+      let { api2 } = this.apiObj
+      api2 && api2.cancel()
+
+      api.api1(params, {
+        cancelToken: new axios.CancelToken(function executor (c) {
+          self.apiObj.api1 = {}
+          self.apiObj.api1.cancel = c
+        })
+      }).then(res => {})
+ },
+  api2 (params) {
+      let self = this
+
+      let { api1 } = this.apiObj
+      api1 && api1.cancel()
+
+      api.api2(params, {
+        cancelToken: new axios.CancelToken(function executor (c) {
+          self.apiObj.api2 = {}
+          self.apiObj.api2.cancel = c
+        })
+      }).then(res => {})
+ },
+  beforeDestroy () {
+    let { api1, api2 } = this.apiObj
+
+    api1.cancel()
+    api2.cancel()
+  },
+```

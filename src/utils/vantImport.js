@@ -57,20 +57,20 @@ Vue.prototype.toast = (msg = '', status = '', duration = 2000, icon = '') => {
       })
       break
     case 'fail':
-      Toast.success({
+      msg && Toast.success({
         message: msg,
         duration
       })
       break
     case 'success':
-      Toast.success({
+      msg && Toast.success({
         message: msg,
         duration
       })
       break
 
     default:
-      Toast({
+      msg && Toast({
         message: msg,
         icon: icon,
         duration

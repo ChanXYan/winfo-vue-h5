@@ -50,13 +50,21 @@ axios.interceptors.response.use(
     return response.data
   },
   (error) => {
-
     window.hideToast && window.hideToast()
+    if (error.toString() === 'Cancel') {
+      console.log('请求中止')
+
+      return {
+        code: 500,
+        msg: ''
+      }
+    }
+
     let res = {
       code: 500,
       msg: '服务器异常'
     }
-    if (error.message.includes('timeout')) {
+    if (error.message && error.message.includes('timeout')) {
       res = {
         code: 500,
         msg: '请求超时，请稍后再试！'

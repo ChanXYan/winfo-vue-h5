@@ -4,16 +4,18 @@ import { preUrl } from '../config'
 
 export default {
   // fsc
-  flagStateControlQuery (data) {
+  flagStateControlQuery (data, config = {}) {
     return service.get(
       `${preUrl}sz/sz-mini-program/nationReport/flagStateControlQuery`, data, {}, true, {
-      timeout: 60000
+      timeout: 60000,
+      ...config
     })
   },
   // 现场监督
-  siteSupervisionQuery (data) {
+  siteSupervisionQuery (data, config = {}) {
     return service.get(`${preUrl}sz/sz-mini-program/nationReport/siteSupervisionQuery`, data, {}, true, {
-      timeout: 60000
+      timeout: 60000,
+      ...config
     })
   },
   // 历史记录

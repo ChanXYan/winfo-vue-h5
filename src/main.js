@@ -22,7 +22,7 @@ Vue.use(VueLazyLoad, {
   attempt: 1,
   error: '',
   listenEvents: ['scroll'],
-  loading: './static/loading.png'
+  // loading: './static/loading.png'
 })
 
 // 已经封装过的localStorage
