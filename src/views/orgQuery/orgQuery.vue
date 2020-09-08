@@ -43,7 +43,7 @@
           </div>
         </div>
       </div>
-      <van-button class="query-btn" type="primary" @click="inquireSever">查询</van-button>
+      <van-button class="query-btn" type="primary" @click="querySever">查询</van-button>
     </div>
 
     <div v-if="active === 1" class="content">
@@ -90,7 +90,7 @@
           </div>
         </div>
       </div>
-      <van-button class="query-btn" type="primary" @click="getExaminationData(param[1])">查询</van-button>
+      <van-button class="query-btn" type="primary" @click="queryExamination()">查询</van-button>
     </div>
 
     <div v-if="active === 2" class="content">
@@ -124,7 +124,7 @@
           </div>
         </div>
       </div>
-      <van-button class="query-btn" type="primary" @click="getExaminationData(param[2])">查询</van-button>
+      <van-button class="query-btn" type="primary" @click="queryTrain()">查询</van-button>
     </div>
     <!-- 资质多选 -->
     <queryPicker
@@ -172,6 +172,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce'
 import api from '@/api'
 import queryPicker from '@/components/queryPicker'
 import autocomplete from '@/components/autocomplete'
@@ -186,9 +187,8 @@ export default {
       loading: false,
       finished: false,
       dxcodeImg: '',
-      param: [{ dwlxarr: [] }, { validFlag: true, }, { training: [''], },],
+      param: [{ orgName: '', dwlxarr: [] }, { validFlag: true, }, { training: [''], },],
       orgNames: [],
-      keyword: '',
       isFocus: false,
       selected: [],
       orgNameObj: {},
@@ -215,14 +215,27 @@ export default {
       return this.orgNames.filter((e) => e.includes(this.param[0].org))
     },
   },
+  watch: {
+    'param.0.orgName' () {
+      this.loadTip(this.param[0].orgName)
+    }
+
+  },
   methods: {
+    loadTip: debounce(function (str) {
+      api.getDwTip({ q: encodeURI(str), limit: 10, prompt_type: 'H5', timestamp: Date.now() }).then((tips) => {
+        if (!tips) return
+        this.orgNames = tips.split('\n').map(e => e.split('|')[1])
+      }
+      )
+    }, 250),
     onConfirmshowQualification (value) {
       if (!value.length) {
         this.qualificationName = '请选择'
         return
       }
       this.qualificationName = `已选择${value.length}项`
-      this.param[0].dwlxarr = value.join()
+      this.param[0].dwlxarr = value
       this.showQualification = false
     },
     onConfirmProvince ({ label, value }) {
@@ -264,21 +277,44 @@ export default {
         this.dxcodeImg = `data:image/png;base64,${temp}`
       })
     },
-    inquireSever () {
+    querySever () {
       if (this.param[0].code) {
         this.toast('请填写验证码')
         return
       }
       this.$router.push({
         name: 'orgList',
-        query: { type: 1, ...this.param[0] },
+        query: { type: 1, ...this.param[0], dwlxarr: this.param[1].dwlxarr.join() },
       })
     },
-    getExaminationData (obj) {
+    queryExamination () {
+      if (this.param[1].code) {
+        this.toast('请填写验证码')
+        return
+      }
+
+      const obj = JSON.parse(JSON.stringify(this.param[1]))
       obj.valid = obj.valid ? 1 : 0
       obj.oneCheckTwo = obj.oneCheckTwo ? 1 : undefined
 
-      obj.code = ''
+      this.$router.push({
+        name: 'orgList',
+        query: { type: 2, ...obj },
+      })
+
+      this.param[1].code = ''
+    },
+    queryTrain () {
+      if (this.param[2].code) {
+        this.toast('请填写验证码')
+        return
+      }
+
+      this.$router.push({
+        name: 'orgList',
+        query: { type: 2, ...this.param[2] },
+      })
+
     },
     getOrgDict (obj) {
       const dict = JSON.parse(sessionStorage.getItem('orgDict'))
@@ -301,7 +337,6 @@ export default {
       this.param[this.active].code = ''
     }
   },
-  watch: {},
   mounted () {
     this.getOrgDict()
     this.getDxcodeImg()

@@ -47,27 +47,27 @@
           <ul class="info">
             <li>
               <span>主检医师：</span>
-              <p>{{info.person}}</p>
+              <p>{{info.doctor}}</p>
             </li>
             <li>
               <span>办公电话：</span>
-              <p>{{info.phone}}</p>
+              <p>{{info.officePhone}}</p>
             </li>
             <li>
               <span>机构地址：</span>
-              <p>{{info.address}}</p>
+              <p>{{info.orgAddr}}</p>
             </li>
             <li>
               <span>核验机构：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.checkOrg}}</p>
             </li>
             <li>
               <span>上报时间：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.reportTime}}</p>
             </li>
             <li>
               <span>备 注：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.remark}}</p>
             </li>
           </ul>
         </div>
@@ -78,32 +78,32 @@
           <ul class="info">
             <li>
               <span>联系人：</span>
-              <p>{{info.person}}</p>
+              <p>{{info.linkMan}}</p>
             </li>
             <li>
               <span>办公电话：</span>
-              <p>{{info.phone}}</p>
+              <p>{{info.officePhone }}</p>
             </li>
             <li>
               <span>机构地址：</span>
-              <p>{{info.address}}</p>
+              <p>{{info.orgAddr}}</p>
             </li>
             <li>
               <span>许可签发：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.startDate}}</p>
             </li>
             <li>
               <span>许可截止：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.endDate}}</p>
             </li>
           </ul>
 
           <ul class="lists" v-for="(item,index) in info.list" :key="'item'+index">
             <li>
-              <div class="top">{{item.title}}</div>
+              <div class="top">{{item.item_code}}</div>
               <ul class="ct">
-                <li>培训规模：{{item.range}}</li>
-                <li>主管机关：{{item.inst}}</li>
+                <li>培训规模：{{item.train_org_cod}}</li>
+                <li>主管机关：{{item.maritime_agency}}</li>
               </ul>
             </li>
           </ul>
