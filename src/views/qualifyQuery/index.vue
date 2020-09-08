@@ -62,8 +62,8 @@
           <span>考试类型</span>
           <div class="value">
             <van-checkbox-group icon-size="15" v-model="formObj[1].examType" direction="horizontal">
-              <van-checkbox name="1">合格证考试</van-checkbox>
-              <van-checkbox name="2">适任考试</van-checkbox>
+              <van-checkbox name="P">合格证考试</van-checkbox>
+              <van-checkbox name="S">适任考试</van-checkbox>
             </van-checkbox-group>
           </div>
         </div>
@@ -71,8 +71,8 @@
           <span>考试类别</span>
           <div class="value">
             <van-checkbox-group icon-size="15" v-model="formObj[1].examSort" direction="horizontal">
-              <van-checkbox name="1">理论</van-checkbox>
-              <van-checkbox name="2">评估</van-checkbox>
+              <van-checkbox name="L">理论</van-checkbox>
+              <van-checkbox name="S">评估</van-checkbox>
             </van-checkbox-group>
           </div>
         </div>
@@ -298,6 +298,7 @@ import api from '../../api'
 import alertDetail from '../../components/orgQuery/alertDetail'
 import { idCardMatch, certificateMatch } from '../../utils/matchStr'
 import { format } from 'date-fns'
+import queryPicker from '../../components/queryPicker'
 const tabs = [{
   label: '船员证书',
   value: 1
@@ -457,7 +458,7 @@ const certifyTypeList = [
     value: 7
   }
 ]
-import queryPicker from '../../components/queryPicker'
+
 export default {
   components: {
     alertDetail, queryPicker
@@ -605,7 +606,6 @@ export default {
     //获取验证码
     getDxcodeImg () {
       api.getValidateImage().then(res => {
-        console.log(res)
         let temp = this.transformArrayBufferToBase64(res)
         this.dxcodeImg = `data:image/png;base64,${temp}`
       })
@@ -620,7 +620,6 @@ export default {
       return window.btoa(binary);
     },
     changeTab () {
-      console.log(this.active, typeof this.active)
       let filterList = [0, 1, 2]
       if (filterList.includes(this.active)) {
         this.getDxcodeImg()
@@ -644,7 +643,6 @@ export default {
       this.formObj[5].level = e
       this.formObj = { ...this.formObj }
       this.showLevel = false
-
     },
     onComfirm () {
       let { active, } = this
@@ -688,6 +686,8 @@ export default {
         return
       }
 
+
+
       // 请求接口
       this.$router.push({
         name: 'crewCertificate',
@@ -697,8 +697,10 @@ export default {
       })
     },
     crewExamApi () {
-      let { idCard, examNo, examType, examSort, dxcode } = this.formObj[1]
 
+      let { idCard, examNo, examType, examSort, dxcode } = this.formObj[1]
+      let examSortList = ["L", "S"]
+      let examTypeList = ["P", "S"]
       if (!(idCard || examNo)) {
         this.toast('身份证、准考证号至少填写一项目!')
         return
@@ -718,13 +720,33 @@ export default {
         return
       }
 
-      this.$router.push({
-        name: 'crewCertificate',
-        query: {
-          type: 2 //船员成绩详情
+      let params = {
+        admissionNo: examNo,
+        code: dxcode,
+        examType: examType.length ? examType.toString() : examTypeList.toString(),
+        idCardNo: idCard,
+        subjType: examSort.length ? examSort.toString() : examSortList.toString(),
+      }
+
+
+      this.getCrewExamApi(params)
+
+    },
+    //船员成绩
+    getCrewExamApi (params) {
+
+      api.getCrewExam(params).then(res => {
+
+        if (res.code === 10000) {
+
+          this.$router.push({
+            name: 'crewCertificate',
+            query: {
+              type: 2 //船员成绩详情
+            }
+          })
         }
       })
-
     },
     examPlanApi () {
       let { type, subject, org, ksStartTime, ksEndTime, bmStartTime, bmEndTime, dxcode } = this.formObj[2]
@@ -761,6 +783,15 @@ export default {
         this.toast('请填写验证码')
         return
       }
+    },
+    getExamDict () {
+      api.getExamDict().then(res => {
+        if (res.code === 10000) {
+          let { examTypeList, certTypeList } = res.datas
+          this.examTypeList = examTypeList
+          this.certifyTypeList = certTypeList
+        }
+      })
     },
     onComfirmExamType (o) {
       this.formObj[2].type = [...o]
@@ -801,10 +832,11 @@ export default {
       // }
       //请求接口
     },
+
   },
 
   created () {
-
+    api.getCrewExam({})
   },
   mounted () {
 
@@ -826,6 +858,7 @@ export default {
   },
   activated () {
     this.getDxcodeImg()
+    this.getExamDict()
   },
   deactivated () {
 
