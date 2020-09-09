@@ -54,11 +54,11 @@
               <div class="sure" @click="onComfirm">确定</div>
             </div>
             <van-search
+              v-if="showQuery"
               class="my-search"
               v-model="keyword"
               shape="round"
               placeholder="请输入关键字"
-              @search="onsearch"
               @clear="onclear"
             />
             <div class="listWrap">
@@ -87,7 +87,6 @@
               v-model="keyword"
               shape="round"
               placeholder="请输入关键字"
-              @search="onsearch"
               @clear="onclear"
             />
             <div class="listWrap">
@@ -119,9 +118,13 @@ export default {
   components: {},
   props: {
     show: Boolean,
+    showQuery: {
+      type: Boolean,
+      default: true,
+    },
     list: Array, // 2:[{title,list:[{label,value}]}] 3:[{label,value}]
     values: Array,// []已选择的数组
-    type: Number, // 1:（选择器 1维度数组） 2:（选择器单选 2维度数组） 3 :（1维度数组 滚动） 4 (单选 2纬度 滚动)
+    type: Number, // 1:（选择器 1维度数组 滚动） 2:（选择器单选 2维度数组 不滚动） 3 :（1维度数组 不滚动） 4 (单选 2纬度 滚动)
     propName: String,
     isSingle: { // 是否单选 默认单选
       type: Boolean,
@@ -132,15 +135,45 @@ export default {
     return {
       keyword: '',
       picks: [...this.values],
-      result: [...this.list]
     };
   },
-  computed: {},
+  computed: {
+    result: function () {
+      let temp = []
+      if (this.type === 1) {
+        temp = this.list.filter(item => item.label.includes(this.keyword))
+
+      }
+
+      if (this.type === 4) {
+
+
+        this.list.map(item => {
+          let list = []
+          item.list.map(o => {
+            if (o.label.includes(this.keyword)) {
+              list.push(o)
+            }
+          })
+          if (list.length) {
+            temp.push({
+              title: item.title,
+              list: list
+            })
+          }
+        })
+
+      }
+      return temp
+    }
+  },
   watch: {
     show: function (val) {
+
       if (val) {
         let body = document.body
         body.style.overflow = 'hidden'
+        this.keyword = ''
       } else {
         let body = document.body
         body.style.overflow = 'auto'
@@ -167,41 +200,9 @@ export default {
           this.picks.splice(flag, 1)
         }
       }
-
-
-    },
-    onsearch () {
-
-      if (this.type === 1) {
-        let list = this.list.filter(item => item.label.includes(this.keyword))
-
-        this.result = list
-      }
-
-      if (this.type === 4) {
-
-        let temp = []
-        this.list.map(item => {
-          let list = []
-          item.list.map(o => {
-            if (o.label.includes(this.keyword)) {
-              list.push(o)
-            }
-          })
-          if (list.length) {
-            temp.push({
-              title: item.title,
-              list: list
-            })
-          }
-        })
-        this.result = temp
-      }
-
-
     },
     onclear () {
-      this.result = [...this.list]
+      this.keyword = ''
     },
     onComfirm () {
       this.$emit('onComfirm', this.picks, this.propName)
@@ -224,6 +225,7 @@ export default {
 
   },
   activated () {
+
   },
   beforeCreate () { },
   beforeMount () { },
@@ -362,6 +364,9 @@ export default {
         }
       }
     }
+  }
+  /deep/ .my-search .van-field__control {
+    text-align: left;
   }
 }
 </style>
