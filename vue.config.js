@@ -19,17 +19,10 @@ module.exports = {
         }
       },
       '/msa': {
-        target: 'https://cyxx.msa.gov.cn/crew_qey/qry/',
+        target: 'https://cyxx.msa.gov.cn/crew_qey/',
         changeOrigin: true,
         pathRewrite: {
           '^/msa': ''
-        }
-      },
-      '/mPub': {
-        target: 'https://cyxx.msa.gov.cn/crew_qey/pub/',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/mPub': ''
         }
       }
     }
@@ -43,7 +36,7 @@ module.exports = {
       //生成文件的最大体积 整数类型（以字节为单位）
       maxAssetSize: 30000000,
       //只给出 js 文件的性能提示
-      assetFilter: function(assetFilename) {
+      assetFilter: function (assetFilename) {
         return assetFilename.endsWith('.js')
       }
     }

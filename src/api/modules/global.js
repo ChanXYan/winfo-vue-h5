@@ -9,7 +9,7 @@ export default {
   // 获取验证码图片
   getValidateImage () {
     return service.msaGet(
-      `${msaUrl}getValidateImage.action`, {}, {}, false, {
+      `${msaUrl}qry/getValidateImage.action`, {}, {}, false, {
       'responseType': 'arraybuffer'
     })
   }
