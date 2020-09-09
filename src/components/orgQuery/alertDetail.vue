@@ -101,7 +101,7 @@
           <ul class="lists" v-for="(item,index) in info.list" :key="'item'+index">
             <li>
               <div class="top">{{item.item_code}}</div>
-              <ul class="ct">
+              <ul class="ct row">
                 <li>培训规模：{{item.train_org_cod}}</li>
                 <li>主管机关：{{item.maritime_agency}}</li>
               </ul>
@@ -292,24 +292,7 @@ export default {
     info: {
       type: Object,
       default: () => {
-        return {
-          company: '深圳中海船员管理有限公司',
-          person: '答晓旭',
-          phone: '0755-26880978; 0755-26885435',
-          address: '广东省深圳市南山区南海大道1052号海翔广场303室',
-          post: '518067',
-          list: [{
-            org: '甲级服务机构',
-            mainorg: '天津海事局',
-            time1: '2018-03-02',
-            time2: '2022-02-02'
-          }, {
-            org: '甲级服务机构2',
-            mainorg: '天津海事局',
-            time1: '2018-03-02',
-            time2: '2022-02-02'
-          }]
-        }
+        return {}
       }
     }
   },
@@ -317,22 +300,6 @@ export default {
     //这里存放数据
     return {
       iconObj,
-      // info: {
-      //   company: '深圳中海船员管理有限公司',
-      //   person: '答晓旭',
-      //   phone: '0755-26880978; 0755-26885435',
-      //   address: '广东省深圳市南山区南海大道1052号海翔广场303室',
-      //   post: '518067',
-      //   list: [{
-      //     title: '非自航船舶船员',
-      //     range: '4x40',
-      //     inst: '天津海事局',
-      //   }, {
-      //     title: '非自航船舶船员2',
-      //     range: '4x40',
-      //     inst: '天津海事局',
-      //   }]
-      // },
     };
   },
   methods: {
@@ -417,6 +384,11 @@ export default {
             > li {
               line-height: 45px;
               font-size: 24px;
+            }
+
+            &.row {
+              display: flex;
+              justify-content: space-between;
             }
           }
         }

@@ -134,20 +134,18 @@
       :list="qualificationList"
       :values="param[0].dwlxarr"
       propName="dwlxarr"
-      @close="showQualification=false"
+      @close="showQualification = false"
       @onComfirm="onConfirmshowQualification"
     ></queryPicker>
     <!-- 省份 -->
-    <van-popup v-model="showProvince" position="bottom">
-      <van-picker
-        title
-        show-toolbar
-        :columns="provinceList"
-        value-key="label"
-        @confirm="onConfirmProvince"
-        @cancel="showProvince = false"
-      />
-    </van-popup>
+    <queryPicker
+      :show="showProvince"
+      :type="1"
+      :values="param[active].provinceCode"
+      @onComfirm="onConfirmProvince"
+      :list="provinceList"
+      @close="showProvince = false"
+    ></queryPicker>
     <!-- 辖区 -->
     <van-popup v-model="showJurisdiction" position="bottom">
       <van-picker
@@ -164,7 +162,7 @@
       :show="showTraining"
       :type="4"
       :list="trainingList"
-      :values="param[2].training"
+      :values="param[2].trainProject"
       @close="showTraining = false"
       @onComfirm="onConfirmTraining"
     />
@@ -173,6 +171,7 @@
 
 <script>
 import debounce from 'lodash/debounce'
+
 import api from '@/api'
 import queryPicker from '@/components/queryPicker'
 import autocomplete from '@/components/autocomplete'
@@ -187,7 +186,11 @@ export default {
       loading: false,
       finished: false,
       dxcodeImg: '',
-      param: [{ orgName: '', dwlxarr: [] }, { validFlag: true, }, { training: [''], },],
+      param: [
+        { orgName: '', dwlxarr: [], provinceCode: [''] },
+        { valid: true, provinceCode: [''] },
+        { trainProject: [''], provinceCode: [''] }
+      ],
       orgNames: [],
       isFocus: false,
       selected: [],
@@ -204,7 +207,7 @@ export default {
       jurisdictionName: '',
       showTraining: false,
       trainingName: '',
-      trainingList: [],
+      trainingList: []
     }
   },
   computed: {
@@ -213,43 +216,55 @@ export default {
         return []
       }
       return this.orgNames.filter((e) => e.includes(this.param[0].org))
-    },
+    }
   },
   watch: {
     'param.0.orgName' () {
       this.loadTip(this.param[0].orgName)
     }
-
   },
   methods: {
     loadTip: debounce(function (str) {
-      api.getDwTip({ q: encodeURI(str), limit: 10, prompt_type: 'H5', timestamp: Date.now() }).then((tips) => {
-        if (!tips) return
-        this.orgNames = tips.split('\n').map(e => e.split('|')[1])
-      }
-      )
+      api
+        .getDwTip({
+          q: escape(escape(str)),
+          limit: 10,
+          prompt_type: 'H5',
+          timestamp: Date.now()
+        })
+        .then((tips) => {
+          if (!tips) return
+          this.orgNames = tips.split('\n').map((e) => e.split('|')[1])
+        })
     }, 250),
     onConfirmshowQualification (value) {
       if (!value.length) {
-        this.qualificationName = '请选择'
+        this.qualificationName = ''
+        this.param[0].dwlxarr = ['']
         return
       }
       this.qualificationName = `已选择${value.length}项`
       this.param[0].dwlxarr = value
       this.showQualification = false
     },
-    onConfirmProvince ({ label, value }) {
-      this.provinceNames[this.active] = label
+    onConfirmProvince (value) {
+      if (!value.length) {
+        this.qualificationName = ''
+        this.param[this.active].provinceCode = ['']
+        return
+      }
+      this.provinceNames[this.active] =
+        this.provinceList.find(e => e.value === value[0]).label
       this.param[this.active].provinceCode = value
       this.showProvince = false
     },
     onConfirmJurisdiction ({ label, value }) {
       this.jurisdictionName = label
-      this.param[1].jurisdiction = value
+      this.param[1].orgCode = value
       this.showJurisdiction = false
     },
     onConfirmTraining (value) {
-      this.param[2].training = value
+      this.param[2].trainProject = value
       if (!value.length) {
         this.trainingName = ''
         return
@@ -278,17 +293,20 @@ export default {
       })
     },
     querySever () {
-      if (this.param[0].code) {
+      if (!this.param[0].code) {
         this.toast('请填写验证码')
         return
       }
+      const dwlxarr = this.param[0].dwlxarr.join()
+      const provinceCode = this.param[0].provinceCode[0]
+
       this.$router.push({
         name: 'orgList',
-        query: { type: 1, ...this.param[0], dwlxarr: this.param[1].dwlxarr.join() },
+        query: { type: 1, ...this.param[0], dwlxarr, provinceCode }
       })
     },
     queryExamination () {
-      if (this.param[1].code) {
+      if (!this.param[1].code) {
         this.toast('请填写验证码')
         return
       }
@@ -296,25 +314,27 @@ export default {
       const obj = JSON.parse(JSON.stringify(this.param[1]))
       obj.valid = obj.valid ? 1 : 0
       obj.oneCheckTwo = obj.oneCheckTwo ? 1 : undefined
+      obj.provinceCode = obj.provinceCode[0]
 
       this.$router.push({
         name: 'orgList',
-        query: { type: 2, ...obj },
+        query: { type: 2, ...obj }
       })
 
       this.param[1].code = ''
     },
     queryTrain () {
-      if (this.param[2].code) {
+      const params = this.param[2]
+      if (!params.code) {
         this.toast('请填写验证码')
         return
       }
 
+      const trainProject = params.trainProject[0]
       this.$router.push({
         name: 'orgList',
-        query: { type: 2, ...this.param[2] },
+        query: { type: 3, ...params, provinceCode: params.provinceCode[0], trainProject }
       })
-
     },
     getOrgDict (obj) {
       const dict = JSON.parse(sessionStorage.getItem('orgDict'))
@@ -335,6 +355,7 @@ export default {
     },
     changeTab () {
       this.param[this.active].code = ''
+      this.getDxcodeImg()
     }
   },
   mounted () {
@@ -342,24 +363,23 @@ export default {
     this.getDxcodeImg()
   },
   activated () {
+    this.param[this.active].code = ''
     this.getDxcodeImg()
   },
-  beforeDestroy () {
-  },
-  destroyed () { },
 }
 </script>
 <style lang="less" scoped>
 .container {
   width: 100vw;
   height: 100vh;
-  background: #fff;
+  background: #f5f7fa;
   color: #333;
   font-size: 24px;
   .content {
     border-top: 20px solid #f5f7fa;
     .list {
       padding: 0 30px;
+      background: #fff;
       .item {
         position: relative;
         display: flex;
@@ -367,6 +387,9 @@ export default {
         color: #666;
         font-size: 24px;
         border-bottom: 1px solid #f5f7fa;
+        &:last-child {
+          border-bottom: 0;
+        }
         > span {
           width: 180px;
         }
@@ -440,5 +463,9 @@ export default {
 
 /deep/ .van-field__body {
   height: 100%;
+}
+
+/deep/ .van-cell::after {
+  border: 0;
 }
 </style>

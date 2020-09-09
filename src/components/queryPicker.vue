@@ -141,8 +141,8 @@ export default {
     result: function () {
       let temp = []
       if (this.type === 1) {
+        if (!this.keyword) return this.list
         temp = this.list.filter(item => item.label.includes(this.keyword))
-
       }
 
       if (this.type === 4) {
@@ -347,7 +347,7 @@ export default {
           display: flex;
           line-height: 88px;
           margin-left: 30px;
-          padding-right: 30px;
+          margin-right: 30px;
           border-bottom: 1px solid #eee;
           > p {
             flex: 1;
