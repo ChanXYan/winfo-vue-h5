@@ -2,8 +2,15 @@
 <template>
   <div class="container">
     <!-- 服务/外派机构 -->
-    <div class="list" v-if="type === 1">
-      <div v-for="item in list" :key="item.dwdm" @click="clickItem(item)" class="item">
+    <van-list
+      v-model="loading"
+      :finished="finished"
+      finished-text="没有更多了"
+      @load="loadData"
+      class="list"
+      v-if="type === 1"
+    >
+      <div v-for="(item,index) in list" :key="index" @click="clickItem(item)" class="item">
         <div class="top">{{ item.orgName }}</div>
         <div class="content">
           <div class="left">
@@ -19,28 +26,42 @@
           <div class="right">详情</div>
         </div>
       </div>
-    </div>
+    </van-list>
     <!-- 体检机构 -->
-    <div class="list" v-if="type === 2">
+    <van-list
+      v-model="loading"
+      :finished="finished"
+      finished-text="没有更多了"
+      @load="loadData"
+      class="list"
+      v-if="type === 2"
+    >
       <div v-for="item in list" :key="item.dwdm" @click="clickItem(item)" class="item">
         <div class="top">{{ item.orgName }}</div>
         <div class="content">
           <div class="left">
             <div class="item mb20">
-              <span>联系人：</span>
-              <div class="value">{{ item.linkMan }}</div>
+              <span>主检医师：</span>
+              <div class="value">{{ item.doctor }}</div>
             </div>
             <div class="item">
-              <span>联系电话：</span>
-              <div class="value">{{ item.officePhone }}</div>
+              <span>核验机构：</span>
+              <div class="value">{{ item.checkOrg }}</div>
             </div>
           </div>
           <div class="right">详情</div>
         </div>
       </div>
-    </div>
+    </van-list>
     <!-- 培训机构 -->
-    <div class="list" v-if="type === 3">
+    <van-list
+      v-model="loading"
+      :finished="finished"
+      finished-text="没有更多了"
+      @load="loadData"
+      class="list"
+      v-if="type === 3"
+    >
       <div v-for="item in list" :key="item.dwdm" @click="clickItem(item)" class="item">
         <div class="top">{{ item.orgName }}</div>
         <div class="content">
@@ -50,26 +71,21 @@
               <div class="value">{{ item.linkMan }}</div>
             </div>
             <div class="item">
-              <span>联系电话：</span>
+              <span>办公电话：</span>
               <div class="value">{{ item.officePhone }}</div>
             </div>
           </div>
           <div class="right">详情</div>
         </div>
       </div>
-    </div>
+    </van-list>
     <alertDetail :show="showDetail" :info="info" :type="type" @close="showDetail = false" />
   </div>
 </template>
 
 <script>
-import BScroll from '@better-scroll/core'
-import Pullup from '@better-scroll/pull-up'
-
 import api from '@/api'
 import alertDetail from '../../components/orgQuery/alertDetail'
-
-BScroll.use(Pullup)
 
 export default {
   components: {
@@ -77,8 +93,9 @@ export default {
   },
   data () {
     return {
-      bscroll: null,
+      loading: false,
       showDetail: false,
+      finished: false,
       type: 0,
       page: 0,
       reqParams: {},
@@ -100,20 +117,43 @@ export default {
           item.list.map(e => {
             e.org = this.dict.list3.find(el => el.value === e.cy_dwlx).label
           })
+        } else if (this.type === 3) {
+          this.$set(item, 'list', await api.trainProj({ dwdm: item.dwdm }))
         }
       }
     },
     async getServiceOrg () {
       const { datas } = await api.getServiceOrg({ page: this.page, ...this.reqParams })
-      if (!datas.list.length) return
+      this.loading = false
+      if (!datas?.list?.length) {
+        this.finished = true
+        return
+      }
       this.list.push(...datas.list)
       this.page++
-      if (this.page * 10 >= datas.totalPage) this.bscroll.closePullUp()
+      if (this.page >= datas.totalPage) this.finished = true
     },
-    getExaminationData () {
-      api.getExaminationData({ page: this.page, ...this.reqParams }).then((res) => {
-        this.list.push(...res.datas.list)
-      })
+    async getExaminationData () {
+      const { datas } = await api.getExaminationData({ page: this.page, ...this.reqParams })
+      this.loading = false
+      if (!datas?.list?.length) {
+        this.finished = true
+        return
+      }
+      this.list.push(...datas.list)
+      this.page++
+      if (this.page >= datas.totalPage) this.finished = true
+    },
+    async getTrain () {
+      const { datas } = await api.getTrain({ page: this.page, ...this.reqParams })
+      this.loading = false
+      if (!datas?.list?.length) {
+        this.finished = true
+        return
+      }
+      this.list.push(...datas.list)
+      this.page++
+      if (this.page >= datas.totalPage) this.finished = true
     },
     async loadData () {
       switch (this.type) {
@@ -121,8 +161,10 @@ export default {
           await this.getServiceOrg()
           break
         case 2:
+          await this.getExaminationData()
           break
         case 3:
+          await this.getTrain()
           break
       }
     },
@@ -135,15 +177,6 @@ export default {
         })
       }
     },
-    async pullingUpHandler () {
-      this.isPullUpLoad = true
-
-      await this.loadData()
-
-      this.bscroll.finishPullUp()
-      this.bscroll.refresh()
-      this.isPullUpLoad = false
-    },
   },
   async mounted () {
     this.reqParams = this.$route.query
@@ -154,39 +187,29 @@ export default {
     document.title = titleMap[this.type]
 
     this.getOrgDict()
-    this.loadData()
-    this.$nextTick(() => {
-      this.bscroll = new BScroll('.container', {
-        click: true,
-        pullUpLoad: true
-      })
-
-      this.bscroll.on('pullingUp', this.pullingUpHandler)
-    })
-
   },
 }
 </script>
 
 <style lang="less" scoped>
 .container {
-  background: #f5f8fa;
   height: 100vh;
-  overflow: hidden;
+  background: #f5f8fa;
   .list {
     padding: 0 15px;
-    padding-bottom: 40px;
+    padding-top: 30px;
+    background: #f5f8fa;
     > .item {
       width: 720px;
-      height: 230px;
       padding: 0 16px;
       background: #ffffff;
       box-shadow: 0px 2px 8px 0px rgba(5, 60, 113, 0.2);
       border-radius: 8px;
-      margin-top: 30px;
+      margin-bottom: 30px;
       .top {
+        padding: 25px 0;
         padding-left: 11px;
-        line-height: 94px;
+        line-height: 1.3;
         font-size: 36px;
         font-weight: bold;
         color: #000000;

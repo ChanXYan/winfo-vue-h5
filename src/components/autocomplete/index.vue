@@ -42,7 +42,7 @@ export default {
   computed: {
     matchingOrg () {
       if (!this.isFocus || !this.keyword.length || !this.tipList.length) return []
-      return this.tipList.filter(e => e.includes(this.keyword))
+      return this.tipList.filter(e => e?.includes(this.keyword))
     }
   },
   methods: {

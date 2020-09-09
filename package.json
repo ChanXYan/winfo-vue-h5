@@ -9,8 +9,6 @@
     "dev": "vue-cli-service serve"
   },
   "dependencies": {
-    "@better-scroll/core": "^2.0.2",
-    "@better-scroll/pull-up": "^2.0.2",
     "axios": "^0.20.0",
     "core-js": "^3.6.5",
     "lodash": "^4.17.20",
