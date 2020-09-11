@@ -12,10 +12,10 @@ export default [
     component: () => import('@/views/qualifyQuery/showPdf.vue')
   },
   {
-    path: "/examineeDetail",
-    name: "examineeDetail",
-    meta: { title: '免考考生查询' },
-    component: () => import('@/views/qualifyQuery/examineeDetail.vue')
+    path: "/exemption",
+    name: "exemption",
+    meta: { title: '免考考生查询', keepAlive: true, },
+    component: () => import('@/views/qualifyQuery/exemption.vue')
   },
   {
     path: "/crewCertificate",

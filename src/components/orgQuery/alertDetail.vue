@@ -116,7 +116,7 @@
           <ul class="info">
             <li>
               <span>姓名：</span>
-              <p>{{info.person}}</p>
+              <p>{{info.name}}</p>
             </li>
             <li>
               <span>性别：</span>
@@ -124,43 +124,43 @@
             </li>
             <li>
               <span>身份证号：</span>
-              <p>{{info.address}}</p>
+              <p>{{info.idCardNo}}</p>
             </li>
             <li>
               <span>服务单位：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.serviceUnit}}</p>
             </li>
             <li>
               <span>注册日期：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.registerDate}}</p>
             </li>
             <li>
               <span>电子邮件：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.mail}}</p>
             </li>
             <li>
               <span>邮政编码：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.postalCode}}</p>
             </li>
             <li>
               <span>工作年数：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.workYear}}</p>
             </li>
             <li>
               <span>电话号码：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.phone}}</p>
             </li>
             <li>
               <span>毕业院校：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.graduateSchool}}</p>
             </li>
             <li>
               <span>毕业时间：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.graduateTime}}</p>
             </li>
             <li>
               <span>所学专业：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.major}}</p>
             </li>
           </ul>
         </div>
@@ -171,43 +171,43 @@
           <ul class="info">
             <li>
               <span>制定机构：</span>
-              <p>{{info.person}}</p>
+              <p>{{info.org}}</p>
             </li>
             <li>
               <span>考试地点：</span>
-              <p>{{info.phone}}</p>
+              <p>{{info.examPlace}}</p>
             </li>
             <li>
               <span>考试类型：</span>
-              <p>{{info.address}}</p>
+              <p>{{info.examType}}</p>
             </li>
             <li>
               <span>报名时间：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.signTime}}</p>
             </li>
             <li>
               <span>考试时间：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.examTime}}</p>
             </li>
             <li>
               <span>是否允许分支局报名：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.isAllow}}</p>
             </li>
             <li>
               <span>院校列表：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.schoolList}}</p>
             </li>
             <li>
               <span>缴费截止时间：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.deadline}}</p>
             </li>
             <li>
               <span>考试状态：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.examStatus}}</p>
             </li>
             <li>
               <span>考试计划：</span>
-              <p>{{info.post}}</p>
+              <p>{{info.examPlan}}</p>
             </li>
           </ul>
         </div>
@@ -219,19 +219,19 @@
           <ul class="info">
             <li>
               <span>准考证号码：</span>
-              <p>{{info.person}}</p>
+              <p>{{info.admissionNo}}</p>
             </li>
             <li>
               <span>考试科目：</span>
-              <p>{{info.person}}</p>
+              <p>{{info.examSubject}}</p>
             </li>
             <li>
               <span>科目类别：</span>
-              <p>{{info.person}}</p>
+              <p>{{info.subjectCategory}}</p>
             </li>
             <li>
               <span>考试成绩：</span>
-              <p>{{info.person}}</p>
+              <p>{{info.examScore}}</p>
             </li>
           </ul>
         </div>
@@ -241,29 +241,9 @@
       <div v-if="type=== 7" class="content">
         <div class="contentWrap">
           <ul class="info">
-            <li>
-              <span>姓名：</span>
-              <p>{{info.person}}</p>
-            </li>
-            <li>
-              <span>身份证号码：</span>
-              <p>{{info.person}}</p>
-            </li>
-            <li>
-              <span>签发机关：</span>
-              <p>{{info.person}}</p>
-            </li>
-            <li>
-              <span>签发日期：</span>
-              <p>{{info.person}}</p>
-            </li>
-            <li>
-              <span>有效日期：</span>
-              <p>{{info.person}}</p>
-            </li>
-            <li>
-              <span>证书状态：</span>
-              <p>{{info.person}}</p>
+            <li v-for="(item,index) in list" :key="'item'+index">
+              <span>{{item.props}}</span>
+              <p :class="{'pass':item.value==='有效' }">{{item.value}}</p>
             </li>
           </ul>
         </div>
@@ -278,6 +258,8 @@ const iconObj = {
   2: 'iconjigou',
   3: 'iconjigou',
   4: 'iconzizhizhengshu',
+  5: 'iconzizhizhengshu',
+  6: 'iconzizhizhengshu',
   7: 'iconzizhizhengshu',
 }
 export default {
@@ -293,6 +275,12 @@ export default {
       type: Object,
       default: () => {
         return {}
+      }
+    },
+    list: {
+      type: Array,
+      default: () => {
+        return []
       }
     }
   },
@@ -360,6 +348,7 @@ export default {
           }
           > p {
             flex: 1;
+            margin-left: 10px;
             // width: 437px;
           }
         }
@@ -394,6 +383,10 @@ export default {
         }
       }
     }
+  }
+
+  .pass {
+    color: #1aae1a;
   }
 }
 </style>

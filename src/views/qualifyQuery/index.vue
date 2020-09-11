@@ -93,14 +93,14 @@
         <div class="item">
           <span>考试类型</span>
           <div class="value" @click="showExamType= true">
-            {{formObj[2].type.toString() ||'请选择'}}
+            {{kslx ||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
         <div class="item">
           <span>考试科目</span>
-          <div class="value" @click="showSubject= true">
-            {{formObj[2].subject.toString() ||'请选择'}}
+          <div class="value" @click="kslx ? showSubject= true:toast('请先选择考试类型')">
+            {{kskm ||'请选择'}}
             <span class="iconfont icondown ml10"></span>
           </div>
         </div>
@@ -284,8 +284,9 @@
     <!-- 考试科目 单选 -->
     <queryPicker
       :show="showSubject"
-      :type="3"
+      :type="1"
       :list="subjectList"
+      propName="subject"
       :values="formObj[2].subject"
       @close="showSubject=false"
       @onComfirm="onComfirmSubject"
@@ -319,27 +320,28 @@ const tabs = [{
   value: 6
 }]
 
-const subjectList = [
-  {
-    label: '航海英语',
-    value: 1
-  }, {
-    label: '船舶操纵与避碰',
-    value: 2
-  }, {
-    label: '航海学',
-    value: 3
-  }, {
-    label: '船舶管理（驾驶）',
-    value: 4
-  }, {
-    label: '船舶结构与货运',
-    value: 5
-  }, {
-    label: '船舶辅机',
-    value: 6
-  }
-]
+// const subjectList = [
+//   {
+//     label: '航海英语',
+//     value: 1
+//   }, {
+//     label: '船舶操纵与避碰',
+//     value: 2
+//   }, {
+//     label: '航海学',
+//     value: 3
+//   }, {
+//     label: '船舶管理（驾驶）',
+//     value: 4
+//   }, {
+//     label: '船舶结构与货运',
+//     value: 5
+//   }, {
+//     label: '船舶辅机',
+//     value: 6
+//   }
+// ]
+
 const examList = [{
   title: '海船船员考试科目',
   list: [{
@@ -459,6 +461,10 @@ const certifyTypeList = [
   }
 ]
 
+let examTypeObj = {}
+let certTypeObj = {}
+let subjectObj = {}
+
 export default {
   components: {
     alertDetail, queryPicker
@@ -510,7 +516,7 @@ export default {
       showBmCalendar: false,
       showKsCalendar: false,
       showSubject: false,
-      subjectList,
+      subjectList: [],
       showLevel: false,
       levelList: ['A', 'B', 'C', 'D'],
     };
@@ -529,16 +535,22 @@ export default {
     ksEnd: function () {
       return this.formObj[2].ksEndTime ? format(this.formObj[2].ksEndTime, 'yyyy-MM-dd') : ''
     },
+    kslx: function () {
+      let temp = this.calcDate(this.formObj[2].type, examTypeObj)
+      return temp.toString()
+    },
+    kskm: function () {
+      let temp = this.calcDate(this.formObj[2].subject, subjectObj)
+      return temp.toString()
+    },
     certifyTypeView: function () {
-
-      let temp = this.calcDate(this.certifyTypeList, this.formObj[0].certifyType)
-
+      let temp = this.calcDate(this.formObj[0].certifyType, certTypeObj)
       return temp ? temp.join('、') : ''
     }
   },
   watch: {
     $route (to, from) {
-      const hasCatchPage = ['crewCertificate', 'showPdf']
+      const hasCatchPage = ['crewCertificate', 'showPdf', 'crewScore', 'examPlan', 'exemption']
       if (to.name === 'qualifyQuery' && !hasCatchPage.includes(from.name)) {
         // 不从详情进来的页面， 都是初始化参数
         this.active = 0
@@ -582,17 +594,8 @@ export default {
      * 将 [value1,value2,...] 换成 [label1,label2,...]进行展示
      */
     calcDate (a, b) {
-      let obj = {}
-      let temp = []
-      a.map(item => {
-        obj[item.value] = item.label
-      })
+      let temp = a.map(item => b[item])
 
-      let list = b
-
-      if (list.length) {
-        temp = list.map(item => obj[item])
-      }
       return temp
     },
     toDetail (o) {
@@ -623,6 +626,7 @@ export default {
       let filterList = [0, 1, 2]
       if (filterList.includes(this.active)) {
         this.getDxcodeImg()
+        this.formObj[this.active].dxcode = ''
       }
     },
 
@@ -666,34 +670,43 @@ export default {
     crewApi () {
       let { idCard, cerNo, certifyType, dxcode } = this.formObj[0]
 
-      if (!(idCard || cerNo)) {
-        this.toast('身份证、证书号码至少填写一项目!')
-        return
-      }
+      // if (!(idCard || cerNo)) {
+      //   this.toast('身份证、证书号码至少填写一项目!')
+      //   return
+      // }
 
-      if (idCard && !idCardMatch.test(idCard)) {
-        this.toast('身份证格式不正确')
-        return
-      }
+      // if (idCard && !idCardMatch.test(idCard)) {
+      //   this.toast('身份证格式不正确')
+      //   return
+      // }
 
-      if (cerNo && !certificateMatch.test(cerNo)) {
-        this.toast('证书号码格式不正确')
-        return
-      }
+      // if (cerNo && !certificateMatch.test(cerNo)) {
+      //   this.toast('证书号码格式不正确')
+      //   return
+      // }
 
-      if (!dxcode) {
-        this.toast('请填写验证码')
-        return
-      }
+      // if (!dxcode) {
+      //   this.toast('请填写验证码')
+      //   return
+      // }
+      let parmas = {}
+      api.getCrewCert(parmas).then(res => {
+        if (res.code === 10000) {
+          this.ls.set('CrewCert', res.datas)
 
-
-
-      // 请求接口
-      this.$router.push({
-        name: 'crewCertificate',
-        query: {
-          type: 1 //船员证书详情
+          this.$router.push({
+            name: 'crewCertificate'
+          })
+        } else {
+          this.alertInfo()
         }
+      })
+    },
+    alertInfo () {
+      this.$dialog.alert({
+        title: '',
+        message: `未查询到符合条件的考试成绩信息，\r\n请确认查询条件是否正确`,
+        confirmButtonColor: '#0176FF'
       })
     },
     crewExamApi () {
@@ -701,24 +714,24 @@ export default {
       let { idCard, examNo, examType, examSort, dxcode } = this.formObj[1]
       let examSortList = ["L", "S"]
       let examTypeList = ["P", "S"]
-      if (!(idCard || examNo)) {
-        this.toast('身份证、准考证号至少填写一项目!')
-        return
-      }
-      if (idCard && !idCardMatch.test(idCard)) {
-        this.toast('身份证格式不正确')
-        return
-      }
-      if (examNo && !certificateMatch.test(examNo)) {
-        this.toast('准考证号格式不正确')
-        return
-      }
+      // if (!(idCard || examNo)) {
+      //   this.toast('身份证、准考证号至少填写一项目!')
+      //   return
+      // }
+      // if (idCard && !idCardMatch.test(idCard)) {
+      //   this.toast('身份证格式不正确')
+      //   return
+      // }
+      // if (examNo && !certificateMatch.test(examNo)) {
+      //   this.toast('准考证号格式不正确')
+      //   return
+      // }
 
 
-      if (!dxcode) {
-        this.toast('请填写验证码')
-        return
-      }
+      // if (!dxcode) {
+      //   this.toast('请填写验证码')
+      //   return
+      // }
 
       let params = {
         admissionNo: examNo,
@@ -738,13 +751,14 @@ export default {
       api.getCrewExam(params).then(res => {
 
         if (res.code === 10000) {
-
+          let { hgzExam, srExam } = res.datas
+          this.ls.set('srExam', srExam.map(item => ({ ...item, orgName: item.examNo })))
+          this.ls.set('hgzExam', hgzExam.map(item => ({ ...item, orgName: item.examNo })))
           this.$router.push({
-            name: 'crewCertificate',
-            query: {
-              type: 2 //船员成绩详情
-            }
+            name: 'crewScore',
           })
+        } else {
+          this.toast('没有查询到数据')
         }
       })
     },
@@ -765,31 +779,77 @@ export default {
       //   return
       // }
 
-      if (org && org.length > 16) {
-        this.toast('制定机构只能在16个字以内')
-        return
-      }
-
-      // if (!ksStartTime || !ksEndTime) {
-      //   this.toast('请选择考试时间')
+      // if (org && org.length > 16) {
+      //   this.toast('制定机构只能在16个字以内')
       //   return
       // }
 
-      // if (!bmStartTime || !bmEndTime) {
-      //   this.toast('请选择报名时间')
+      // // if (!ksStartTime || !ksEndTime) {
+      // //   this.toast('请选择考试时间')
+      // //   return
+      // // }
+
+      // // if (!bmStartTime || !bmEndTime) {
+      // //   this.toast('请选择报名时间')
+      // //   return
+      // // }
+      // if (!dxcode) {
+      //   this.toast('请填写验证码')
       //   return
       // }
-      if (!dxcode) {
-        this.toast('请填写验证码')
-        return
+      let params = {
+        page: 1,
+        size: 10
       }
+
+      this.ls.set('examPlan', params)
+      this.$router.push({
+        path: '/examPlan'
+      })
+
+
     },
+    //获取考试科目
+    ueryExamSubjList () {
+      api.ueryExamSubjList({
+        'lycxQO.exam_type': this.formObj[2].type[0]
+      }).then(res => {
+        this.subjectList = res.map(item => ({
+          label: item.value,
+          value: item.key
+        }))
+
+        subjectObj = {}
+        this.subjectList.map(item => {
+          subjectObj[item.value] = item.label
+        })
+
+        let param = this.formObj[2].type[0]
+        this.ls.set(`subjectList${param}`, this.subjectList)
+        this.ls.set(`subjectObj${param}`, subjectObj)
+      })
+    },
+
     getExamDict () {
       api.getExamDict().then(res => {
         if (res.code === 10000) {
           let { examTypeList, certTypeList } = res.datas
           this.examTypeList = examTypeList
           this.certifyTypeList = certTypeList
+
+          examTypeObj = {}
+          examTypeList.map(item => {
+            item.list.length && item.list.map(o => {
+              examTypeObj[o.value] = o.label
+            })
+          })
+
+          certTypeObj = {}
+          certTypeList.map(item => {
+            certTypeObj[item.value] = item.label
+          })
+
+
         }
       })
     },
@@ -797,6 +857,19 @@ export default {
       this.formObj[2].type = [...o]
       this.formObj = { ...this.formObj }
       this.showExamType = false
+      this.formObj[2].subject = []
+
+      if (o.length) {
+        let subjectList = this.ls.get(`subjectList${o[0]}`)
+        if (subjectList && subjectList.length) {
+          this.subjectList = subjectList
+          subjectObj = this.ls.get(`subjectObj${o[0]}`)
+        } else {
+          this.ueryExamSubjList()
+        }
+
+      }
+
     },
     onComfirmPick (o) {
       this.formObj[0].certifyType = [...o]
@@ -809,34 +882,45 @@ export default {
       this.showSubject = false
     },
     freeStudentApi () {
-      let { name, idCard, level } = this.formObj[5]
-      // if (!name) {
-      //   this.toast('请填写姓名')
+      // let { name, idCard, level } = this.formObj[5]
+      // // if (!name) {
+      // //   this.toast('请填写姓名')
+      // //   return
+      // // }
+      // if (name && name.length > 5) {
+      //   this.toast('姓名不能超过5个字')
       //   return
       // }
-      if (name && name.length > 5) {
-        this.toast('姓名不能超过5个字')
-        return
-      }
-      // if (!idCard) {
-      //   this.toast('请填写身份证')
+      // // if (!idCard) {
+      // //   this.toast('请填写身份证')
+      // //   return
+      // // }
+      // if (idCard && !idCardMatch.test(idCard)) {
+      //   this.toast('身份证格式不正确')
       //   return
       // }
-      if (idCard && !idCardMatch.test(idCard)) {
-        this.toast('身份证格式不正确')
-        return
-      }
-      // if (!level) {
-      //   this.toast('请选择报考等级')
-      //   return
-      // }
-      //请求接口
+      // // if (!level) {
+      // //   this.toast('请选择报考等级')
+      // //   return
+      // // }
+      // //请求接口
+      let params = {}
+
+      api.getExamPublic(params).then(res => {
+        if (res.code === 10000) {
+          this.ls.set('ExamPublic', res.datas)
+          this.$router.push({
+            path: '/exemption',
+          })
+        } else {
+          this.toast(res.msg)
+        }
+      })
     },
 
   },
 
   created () {
-    api.getCrewExam({})
   },
   mounted () {
 
