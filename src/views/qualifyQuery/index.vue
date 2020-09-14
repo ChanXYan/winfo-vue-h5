@@ -179,11 +179,11 @@
     <div v-if="active === 4" class="content content5">
       <ul class="list5">
         <li v-for="(item,index) in ycsList" :key="'item'+index" class="item">
-          <div class="title">{{item.title}}</div>
+          <div class="title">{{item.roomName}}</div>
           <ul>
             <li>
               <span>联系人：</span>
-              <p>{{item.person}}</p>
+              <p>{{item.name}}</p>
             </li>
             <li>
               <span>联系电话：</span>
@@ -191,7 +191,7 @@
             </li>
             <li>
               <span>联系邮箱：</span>
-              <p>{{item.mail}}</p>
+              <p>{{item.email}}</p>
             </li>
             <li>
               <span>联系地址：</span>
@@ -320,28 +320,6 @@ const tabs = [{
   value: 6
 }]
 
-// const subjectList = [
-//   {
-//     label: '航海英语',
-//     value: 1
-//   }, {
-//     label: '船舶操纵与避碰',
-//     value: 2
-//   }, {
-//     label: '航海学',
-//     value: 3
-//   }, {
-//     label: '船舶管理（驾驶）',
-//     value: 4
-//   }, {
-//     label: '船舶结构与货运',
-//     value: 5
-//   }, {
-//     label: '船舶辅机',
-//     value: 6
-//   }
-// ]
-
 const examList = [{
   title: '海船船员考试科目',
   list: [{
@@ -380,86 +358,7 @@ const examList = [{
   }]
 }]
 
-const examTypeList = [
-  {
-    title: '海船考试类型',
-    list: [{
-      label: '船长和高级船员适任考试',
-      value: '1'
-    }, {
-      label: '普通和高级船员适任考试',
-      value: '2'
-    }, {
-      label: 'GMDSS适任考试',
-      value: '3'
-    }, {
-      label: '非自航船适任考试',
-      value: '4'
-    }, {
-      label: '海港引航员适任考试',
-      value: '5'
-    }]
-  },
-  {
-    title: '内河考试类型',
-    list: [{
-      label: '内河全国统考（长江）',
-      value: '6'
-    }, {
-      label: '内河全国统考（珠江）',
-      value: '7'
-    }, {
-      label: '内河全国统考（黑龙江）',
-      value: '8'
-    }, {
-      label: '内河非全国统考',
-      value: '9'
-    }, {
-      label: '内河引航员考试',
-      value: '10'
-    }]
-  }
-]
 
-//验船师list
-const ycsList = [{
-  title: '天津海事局考区',
-  person: '张平',
-  phone: '022-58876835',
-  mail: 'cbjyglc@tjmsa.gov.cn',
-  address: '天津市河西区解放南路369号'
-}, {
-  title: '天津海事局考区',
-  person: '张平',
-  phone: '022-58876835',
-  mail: 'cbjyglc@tjmsa.gov.cn',
-  address: '天津市河西区解放南路369号'
-}]
-
-const certifyTypeList = [
-  {
-    label: '合格证',
-    value: 1
-  }, {
-    label: '适任证',
-    value: 2
-  }, {
-    label: '健康证明',
-    value: 3
-  }, {
-    label: '海员证',
-    value: 4
-  }, {
-    label: '技术资格证',
-    value: 5
-  }, {
-    label: '海船船员内河航线行驶资格证明',
-    value: 6
-  }, {
-    label: '特定航线江海直达船舶船员行驶资格证明',
-    value: 7
-  }
-]
 
 let examTypeObj = {}
 let certTypeObj = {}
@@ -475,7 +374,7 @@ export default {
       tabs,
       active: 0,
       examList,
-      ycsList,
+      ycsList: [],
       formObj: {
         0: {
           idCard: '',
@@ -508,9 +407,9 @@ export default {
 
       },
       dxcodeImg: '',
-      certifyTypeList,
+      certifyTypeList: [],
       showExamType: false,
-      examTypeList,
+      examTypeList: [],
       showCertifyType: false,
       showDetail5: false,
       showBmCalendar: false,
@@ -648,8 +547,10 @@ export default {
       this.formObj = { ...this.formObj }
       this.showLevel = false
     },
+    // 点击查询
     onComfirm () {
       let { active, } = this
+
       switch (active) {
         case 0:
           this.crewApi()
@@ -670,26 +571,31 @@ export default {
     crewApi () {
       let { idCard, cerNo, certifyType, dxcode } = this.formObj[0]
 
-      // if (!(idCard || cerNo)) {
-      //   this.toast('身份证、证书号码至少填写一项目!')
-      //   return
-      // }
+      if (!(idCard || cerNo)) {
+        this.toast('身份证、证书号码至少填写一项目!')
+        return
+      }
 
-      // if (idCard && !idCardMatch.test(idCard)) {
-      //   this.toast('身份证格式不正确')
-      //   return
-      // }
+      if (idCard && !idCardMatch.test(idCard)) {
+        this.toast('身份证格式不正确')
+        return
+      }
 
-      // if (cerNo && !certificateMatch.test(cerNo)) {
-      //   this.toast('证书号码格式不正确')
-      //   return
-      // }
+      if (cerNo && !certificateMatch.test(cerNo)) {
+        this.toast('证书号码格式不正确')
+        return
+      }
 
-      // if (!dxcode) {
-      //   this.toast('请填写验证码')
-      //   return
-      // }
-      let parmas = {}
+      if (!dxcode) {
+        this.toast('请填写验证码')
+        return
+      }
+      let parmas = {
+        certificateNo: cerNo,//证书号码
+        certificateType: certifyType.toString(),//证书类型 
+        code: dxcode,
+        idCardNo: idCard
+      }
       api.getCrewCert(parmas).then(res => {
         if (res.code === 10000) {
           this.ls.set('CrewCert', res.datas)
@@ -709,29 +615,30 @@ export default {
         confirmButtonColor: '#0176FF'
       })
     },
+    // 船员成绩
     crewExamApi () {
 
       let { idCard, examNo, examType, examSort, dxcode } = this.formObj[1]
       let examSortList = ["L", "S"]
       let examTypeList = ["P", "S"]
-      // if (!(idCard || examNo)) {
-      //   this.toast('身份证、准考证号至少填写一项目!')
-      //   return
-      // }
-      // if (idCard && !idCardMatch.test(idCard)) {
-      //   this.toast('身份证格式不正确')
-      //   return
-      // }
-      // if (examNo && !certificateMatch.test(examNo)) {
-      //   this.toast('准考证号格式不正确')
-      //   return
-      // }
+      if (!(idCard || examNo)) {
+        this.toast('身份证、准考证号至少填写一项目!')
+        return
+      }
+      if (idCard && !idCardMatch.test(idCard)) {
+        this.toast('身份证格式不正确')
+        return
+      }
+      if (examNo && !certificateMatch.test(examNo)) {
+        this.toast('准考证号格式不正确')
+        return
+      }
 
 
-      // if (!dxcode) {
-      //   this.toast('请填写验证码')
-      //   return
-      // }
+      if (!dxcode) {
+        this.toast('请填写验证码')
+        return
+      }
 
       let params = {
         admissionNo: examNo,
@@ -762,8 +669,9 @@ export default {
         }
       })
     },
+    //适任考试
     examPlanApi () {
-      let { type, subject, org, ksStartTime, ksEndTime, bmStartTime, bmEndTime, dxcode } = this.formObj[2]
+      let { type, subject, org, ksStart, ksEnd, bmStart, bmEnd, dxcode } = this.formObj[2]
       // if (type.length === 0) {
       //   this.toast('请选择考试类型')
       //   return
@@ -784,22 +692,30 @@ export default {
       //   return
       // }
 
-      // // if (!ksStartTime || !ksEndTime) {
-      // //   this.toast('请选择考试时间')
-      // //   return
-      // // }
-
-      // // if (!bmStartTime || !bmEndTime) {
-      // //   this.toast('请选择报名时间')
-      // //   return
-      // // }
-      // if (!dxcode) {
-      //   this.toast('请填写验证码')
+      // if (!ksStartTime || !ksEndTime) {
+      //   this.toast('请选择考试时间')
       //   return
       // }
+
+      // if (!bmStartTime || !bmEndTime) {
+      //   this.toast('请选择报名时间')
+      //   return
+      // }
+      if (!dxcode) {
+        this.toast('请填写验证码')
+        return
+      }
       let params = {
         page: 1,
-        size: 10
+        size: 10,
+        examEndTime: ksStart,//考试
+        examStartTime: ksEnd,
+        applyEndTime: bmStart,
+        applyStartTime: bmEnd,//报名
+        orgName: org,// 制定机构
+        examType: type.toString(),//	考试类型(传对应的代码编号)
+        examSubject: subject.toString(),//考试科目(传对应的代码编号)
+        code: dxcode,//验证码
       }
 
       this.ls.set('examPlan', params)
@@ -829,7 +745,17 @@ export default {
         this.ls.set(`subjectObj${param}`, subjectObj)
       })
     },
+    //考试场所
+    getExamRoomPublicApi () {
 
+      api.getExamRoomPublic().then(res => {
+        if (res.code === 10000) {
+          this.ycsList = res.datas
+        } else {
+          this.toast(res.msg)
+        }
+      })
+    },
     getExamDict () {
       api.getExamDict().then(res => {
         if (res.code === 10000) {
@@ -882,29 +808,33 @@ export default {
       this.showSubject = false
     },
     freeStudentApi () {
-      // let { name, idCard, level } = this.formObj[5]
-      // // if (!name) {
-      // //   this.toast('请填写姓名')
-      // //   return
-      // // }
-      // if (name && name.length > 5) {
-      //   this.toast('姓名不能超过5个字')
+      let { name, idCard, level } = this.formObj[5]
+      // if (!name) {
+      //   this.toast('请填写姓名')
       //   return
       // }
-      // // if (!idCard) {
-      // //   this.toast('请填写身份证')
-      // //   return
-      // // }
-      // if (idCard && !idCardMatch.test(idCard)) {
-      //   this.toast('身份证格式不正确')
+      if (name && name.length > 5) {
+        this.toast('姓名不能超过5个字')
+        return
+      }
+      // if (!idCard) {
+      //   this.toast('请填写身份证')
       //   return
       // }
-      // // if (!level) {
-      // //   this.toast('请选择报考等级')
-      // //   return
-      // // }
-      // //请求接口
-      let params = {}
+      if (idCard && !idCardMatch.test(idCard)) {
+        this.toast('身份证格式不正确')
+        return
+      }
+      // if (!level) {
+      //   this.toast('请选择报考等级')
+      //   return
+      // }
+      //请求接口
+      let params = {
+        idCardNo: idCard,
+        level,
+        name
+      }
 
       api.getExamPublic(params).then(res => {
         if (res.code === 10000) {
@@ -943,6 +873,9 @@ export default {
   activated () {
     this.getDxcodeImg()
     this.getExamDict()
+    //获取验船师列表
+    this.getExamRoomPublicApi()
+
   },
   deactivated () {
 
@@ -953,7 +886,7 @@ export default {
 .container {
   background: #f5f7fa;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   .m50 {
     margin: 0 15px;
     color: #ccc;
@@ -1058,6 +991,7 @@ export default {
   }
 
   .content5 {
+    padding-bottom: 20px;
     .list5 {
       margin: 0 auto;
       width: 718px;

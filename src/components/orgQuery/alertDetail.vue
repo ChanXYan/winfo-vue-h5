@@ -165,7 +165,7 @@
           </ul>
         </div>
       </div>
-
+      <!-- 适任考试计划 -->
       <div v-if="type=== 5" class="content">
         <div class="contentWrap">
           <ul class="info">
@@ -231,7 +231,7 @@
             </li>
             <li>
               <span>考试成绩：</span>
-              <p>{{info.examScore}}</p>
+              <p :class="{'pass': info.examScore==='及格'}">{{info.examScore}}</p>
             </li>
           </ul>
         </div>

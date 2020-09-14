@@ -33,5 +33,9 @@ export default {
   //免考考生公示详情
   getExamPublicDetail (id) {
     return service.get(`${preUrl}rest/basics-program/maritime/getExamPublicDetail/${id}`)
+  },
+  // 验船师考场考区查询
+  getExamRoomPublic () {
+    return service.get(`${preUrl}rest/basics-program/maritime/getExamRoomPublic`)
   }
 }

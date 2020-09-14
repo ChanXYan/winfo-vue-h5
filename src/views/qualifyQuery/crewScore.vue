@@ -149,7 +149,6 @@ export default {
           flex: 1;
         }
         .right {
-          flex: 1;
           display: flex;
           align-items: center;
           justify-content: flex-end;
@@ -172,6 +171,7 @@ export default {
 
   .van-divider {
     margin: 0;
+    height: 40px;
   }
 }
 </style>
