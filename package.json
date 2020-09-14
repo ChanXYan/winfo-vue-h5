@@ -55,7 +55,7 @@
         ]
       },
       "postcss-pxtorem": {
-        "rootValue": 75,
+        "rootValue": 100,
         "selectorBlackList": [
           "van-"
         ],

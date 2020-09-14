@@ -1,6 +1,6 @@
-const baseSize = 75
+const baseSize = 100
 
-function setRem() {
+function setRem () {
   const scale = document.documentElement.clientWidth / 750
   document.documentElement.style.fontSize = baseSize * Math.min(scale, 2) + 'px'
 }
