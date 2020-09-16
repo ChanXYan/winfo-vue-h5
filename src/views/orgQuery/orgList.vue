@@ -122,11 +122,21 @@ export default {
         }
       }
     },
+    checkCode (code) {
+      if (code === 0) {
+        this.$dialog.alert({
+          title: '',
+          message: `未查询到符合条件的信息，\r\n请确认查询条件是否正确`,
+          confirmButtonColor: '#0176FF'
+        }).then(() => { this.$router.back() })
+      }
+    },
     async getServiceOrg () {
-      const { datas } = await api.getServiceOrg({ page: this.page, ...this.reqParams })
+      const { datas, code } = await api.getServiceOrg({ page: this.page, ...this.reqParams })
       this.loading = false
       if (!datas?.list?.length) {
         this.finished = true
+        this.checkCode(code)
         return
       }
       this.list.push(...datas.list)
@@ -134,10 +144,11 @@ export default {
       if (this.page >= datas.totalPage) this.finished = true
     },
     async getExaminationData () {
-      const { datas } = await api.getExaminationData({ page: this.page, ...this.reqParams })
+      const { datas, code } = await api.getExaminationData({ page: this.page, ...this.reqParams })
       this.loading = false
       if (!datas?.list?.length) {
         this.finished = true
+        this.checkCode(code)
         return
       }
       this.list.push(...datas.list)
@@ -145,10 +156,11 @@ export default {
       if (this.page >= datas.totalPage) this.finished = true
     },
     async getTrain () {
-      const { datas } = await api.getTrain({ page: this.page, ...this.reqParams })
+      const { datas, code } = await api.getTrain({ page: this.page, ...this.reqParams })
       this.loading = false
       if (!datas?.list?.length) {
         this.finished = true
+        this.checkCode(code)
         return
       }
       this.list.push(...datas.list)

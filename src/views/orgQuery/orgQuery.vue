@@ -38,8 +38,8 @@
         <div class="item">
           <span>请输入验证码</span>
           <div class="value verif">
-            <van-field v-model="param[0].verif" />
-            <img class="verif-img" @click="getDxcodeImg" :src="dxcodeImg" alt />
+            <van-field v-model="param[0].code" />
+            <img class="verif-img" @click="refreshCode" :src="dxcodeImg" alt />
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@
           <span>请输入验证码</span>
           <div class="value verif">
             <van-field v-model="param[1].code" />
-            <img class="verif-img" v-lazy="dxcodeImg" @click="getDxcodeImg" alt />
+            <img class="verif-img" v-lazy="dxcodeImg" @click="refreshCode" alt />
           </div>
         </div>
       </div>
@@ -120,7 +120,7 @@
           <span>请输入验证码</span>
           <div class="value verif">
             <van-field v-model="param[2].code" />
-            <img class="verif-img" v-lazy="dxcodeImg" @click="getDxcodeImg" alt />
+            <img class="verif-img" v-lazy="dxcodeImg" @click="refreshCode" alt />
           </div>
         </div>
       </div>
@@ -225,17 +225,16 @@ export default {
   },
   methods: {
     loadTip: debounce(function (str) {
-      api
-        .getDwTip({
-          q: escape(escape(str)),
-          limit: 10,
-          prompt_type: 'H5',
-          timestamp: Date.now()
-        })
-        .then((tips) => {
-          if (!tips) return
-          this.orgNames = tips.split('\n').map((e) => e.split('|')[1])
-        })
+      const params = {
+        q: escape(escape(str)),
+        limit: 10,
+        prompt_type: 'H5',
+        timestamp: Date.now()
+      }
+      api.getDwTip(params).then((tips) => {
+        if (!tips) return
+        this.orgNames = tips.split('\n').map((e) => e.split('|')[1])
+      })
     }, 250),
     onConfirmshowQualification (value) {
       if (!value.length) {
@@ -294,9 +293,14 @@ export default {
     },
     querySever () {
       if (!this.param[0].code) {
-        this.toast('请填写验证码')
+        this.toast('请输入验证码')
         return
       }
+      if (this.param[0].code.length !== 4) {
+        this.toast('验证码错误')
+        return
+      }
+
       const dwlxarr = this.param[0].dwlxarr.join()
       const provinceCode = this.param[0].provinceCode[0]
 
@@ -307,7 +311,11 @@ export default {
     },
     queryExamination () {
       if (!this.param[1].code) {
-        this.toast('请填写验证码')
+        this.toast('请输入验证码')
+        return
+      }
+      if (this.param[1].code.length !== 4) {
+        this.toast('验证码错误')
         return
       }
 
@@ -326,7 +334,11 @@ export default {
     queryTrain () {
       const params = this.param[2]
       if (!params.code) {
-        this.toast('请填写验证码')
+        this.toast('请输入验证码')
+        return
+      }
+      if (params.code.length !== 4) {
+        this.toast('验证码错误')
         return
       }
 
@@ -335,6 +347,8 @@ export default {
         name: 'orgList',
         query: { type: 3, ...params, provinceCode: params.provinceCode[0], trainProject }
       })
+
+      this.param[2].code = ''
     },
     getOrgDict (obj) {
       const dict = JSON.parse(sessionStorage.getItem('orgDict'))
@@ -355,16 +369,20 @@ export default {
     },
     changeTab () {
       this.param[this.active].code = ''
+      this.refreshCode()
+    },
+    async refreshCode () {
+      await api.scoreInit()
       this.getDxcodeImg()
     }
   },
   mounted () {
+    this.refreshCode()
     this.getOrgDict()
-    this.getDxcodeImg()
   },
   activated () {
+    this.refreshCode()
     this.param[this.active].code = ''
-    this.getDxcodeImg()
   },
 }
 </script>
