@@ -612,7 +612,8 @@ export default {
           })
         } else {
           this.updateCodeImg()
-          this.alertInfo()
+          this.toast(res.msg)
+          // this.alertInfo()
         }
       })
     },
