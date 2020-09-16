@@ -122,7 +122,7 @@ export default {
         }
       }
     },
-    checkCode (code) {
+    checkCode (code, message) {
       if (code === 0) {
         this.$dialog.alert({
           title: '',
@@ -130,13 +130,20 @@ export default {
           confirmButtonColor: '#0176FF'
         }).then(() => { this.$router.back() })
       }
+      if (code === -1) {
+        this.$dialog.alert({
+          title: '',
+          message,
+          confirmButtonColor: '#0176FF'
+        }).then(() => { this.$router.back() })
+      }
     },
     async getServiceOrg () {
-      const { datas, code } = await api.getServiceOrg({ page: this.page, ...this.reqParams })
+      const { datas, code, msg } = await api.getServiceOrg({ page: this.page, ...this.reqParams })
       this.loading = false
       if (!datas?.list?.length) {
         this.finished = true
-        this.checkCode(code)
+        this.checkCode(code, msg)
         return
       }
       this.list.push(...datas.list)
@@ -144,11 +151,11 @@ export default {
       if (this.page >= datas.totalPage) this.finished = true
     },
     async getExaminationData () {
-      const { datas, code } = await api.getExaminationData({ page: this.page, ...this.reqParams })
+      const { datas, code, msg } = await api.getExaminationData({ page: this.page, ...this.reqParams })
       this.loading = false
       if (!datas?.list?.length) {
         this.finished = true
-        this.checkCode(code)
+        this.checkCode(code, msg)
         return
       }
       this.list.push(...datas.list)
@@ -156,11 +163,11 @@ export default {
       if (this.page >= datas.totalPage) this.finished = true
     },
     async getTrain () {
-      const { datas, code } = await api.getTrain({ page: this.page, ...this.reqParams })
+      const { datas, code, msg } = await api.getTrain({ page: this.page, ...this.reqParams })
       this.loading = false
       if (!datas?.list?.length) {
         this.finished = true
-        this.checkCode(code)
+        this.checkCode(code, msg)
         return
       }
       this.list.push(...datas.list)
@@ -179,6 +186,7 @@ export default {
           await this.getTrain()
           break
       }
+      this.reqParams.code = undefined
     },
     getOrgDict (obj) {
       this.dict = JSON.parse(sessionStorage.getItem('orgDict'))
