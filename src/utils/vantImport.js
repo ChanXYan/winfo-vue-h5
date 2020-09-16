@@ -97,3 +97,8 @@ Vue.prototype.$loading = window.$loading = (duration = 0, forbidClick = false) =
 Vue.prototype.hideToast = window.hideToast = () => {
   Toast.clear()
 }
+
+
+Vue.prototype.sleep = (ms = 1500) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
