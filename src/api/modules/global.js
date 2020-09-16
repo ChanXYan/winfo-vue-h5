@@ -9,9 +9,14 @@ export default {
   // 获取验证码图片
   getValidateImage () {
     return service.msaGet(
-      `${msaUrl}qry/getValidateImage.action`, {}, {}, false, {
+      `${preUrl}rest/basics-program/maritime/getValidateImage`, {}, {}, false, {
       'responseType': 'arraybuffer'
     })
+  },
+  // 获取初始化cookies信息
+  scoreInit () {
+    return service.msaGet(
+      `${msaUrl}qry/scoreInit.action`, {}, {}, false)
   }
 
 }

@@ -590,6 +590,10 @@ export default {
         this.toast('请填写验证码')
         return
       }
+      if (dxcode.length !== 4) {
+        this.toast('验证码错误')
+        return
+      }
       let parmas = {
         certificateNo: cerNo,//证书号码
         certificateType: certifyType.toString(),//证书类型 
@@ -637,6 +641,10 @@ export default {
 
       if (!dxcode) {
         this.toast('请填写验证码')
+        return
+      }
+      if (dxcode.length !== 4) {
+        this.toast('验证码错误')
         return
       }
 
@@ -703,6 +711,10 @@ export default {
       // }
       if (!dxcode) {
         this.toast('请填写验证码')
+        return
+      }
+      if (dxcode.length !== 4) {
+        this.toast('验证码错误')
         return
       }
       let params = {
@@ -847,6 +859,10 @@ export default {
         }
       })
     },
+    // 获取验证码cookie
+    init () {
+      api.scoreInit()
+    }
 
   },
 
@@ -871,6 +887,7 @@ export default {
 
   },
   activated () {
+    this.init()
     this.getDxcodeImg()
     this.getExamDict()
     //获取验船师列表
