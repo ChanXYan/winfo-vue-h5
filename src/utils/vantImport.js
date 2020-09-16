@@ -47,7 +47,7 @@ Toast.setDefaultOptions('loading', { forbidClick: true })
  * @param {*} icon
  */
 // duration = 0 持续展示
-Vue.prototype.toast = (msg = '', status = '', duration = 2000, icon = '') => {
+Vue.prototype.toast = (msg = '', status = '', duration = 3000, icon = '') => {
   switch (status) {
     case 'loading':
       Toast.loading({
