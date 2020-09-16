@@ -146,12 +146,12 @@
             </div>
           </div>
         </div>
-        <div class="item dxcode">
+        <!-- <div class="item dxcode">
           <div class="value">
             <van-field v-model="formObj[2].dxcode" clearable placeholder="请输入验证码" />
           </div>
           <img v-lazy="dxcodeImg" @click="getDxcodeImg" alt />
-        </div>
+        </div>-->
       </div>
 
       <van-button class="query-btn" type="primary" @click="onComfirm">查询</van-button>
@@ -603,7 +603,7 @@ export default {
         code: dxcode,
         idCardNo: idCard
       }
-      api.getCrewCert(parmas).then(res => {
+      api.getCrewCert(parmas).then(async res => {
         if (res.code === 10000) {
           this.ls.set('CrewCert', res.datas)
 
@@ -611,9 +611,9 @@ export default {
             name: 'crewCertificate'
           })
         } else {
-          this.updateCodeImg()
           this.toast(res.msg)
-          // this.alertInfo()
+          await this.sleep()
+          this.updateCodeImg()
         }
       })
     },
@@ -668,7 +668,7 @@ export default {
     //船员成绩
     getCrewExamApi (params) {
 
-      api.getCrewExam(params).then(res => {
+      api.getCrewExam(params).then(async res => {
 
         if (res.code === 10000) {
           let { hgzExam, srExam } = res.datas
@@ -678,8 +678,9 @@ export default {
             name: 'crewScore',
           })
         } else {
+          this.toast(res.msg)
+          await this.sleep()
           this.updateCodeImg()
-          this.toast('没有查询到数据')
         }
       })
     },
@@ -715,14 +716,14 @@ export default {
       //   this.toast('请选择报名时间')
       //   return
       // }
-      if (!dxcode) {
-        this.toast('请填写验证码')
-        return
-      }
-      if (dxcode.length !== 4) {
-        this.toast('验证码错误')
-        return
-      }
+      // if (!dxcode) {
+      //   this.toast('请填写验证码')
+      //   return
+      // }
+      // if (dxcode.length !== 4) {
+      //   this.toast('验证码错误')
+      //   return
+      // }
       let params = {
         page: 1,
         size: 10,
@@ -733,19 +734,20 @@ export default {
         orgName: org,// 制定机构
         examType: type.toString(),//	考试类型(传对应的代码编号)
         examSubject: subject.toString(),//考试科目(传对应的代码编号)
-        code: dxcode,//验证码
+        // code: dxcode,//验证码
       }
 
 
-      api.getExamPlan(params).then(res => {
+      api.getExamPlan(params).then(async res => {
         if (res.code === 10000) {
           this.ls.set('examPlan', params)
           this.$router.push({
             path: '/examPlan'
           })
         } else {
-          this.updateCodeImg()
           this.toast(res.msg)
+          await this.sleep()
+          this.updateCodeImg()
         }
       })
 
