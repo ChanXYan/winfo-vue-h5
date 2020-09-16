@@ -1,12 +1,6 @@
 <template>
   <div class="container">
-    <van-tabs
-      class="tabs"
-      v-model="active"
-      color="#0176FF"
-      title-active-color="#0176FF"
-      @change="changeTab"
-    >
+    <van-tabs class="tabs" v-model="active" color="#0176FF" title-active-color="#0176FF">
       <van-tab title="服务/外派机构"></van-tab>
       <van-tab title="体检机构"></van-tab>
       <van-tab title="培训机构"></van-tab>
@@ -35,13 +29,13 @@
           </div>
         </div>
 
-        <div class="item">
+        <!-- <div class="item">
           <span>请输入验证码</span>
           <div class="value verif">
             <van-field v-model="param[0].code" />
             <img class="verif-img" @click="refreshCode" :src="dxcodeImg" alt />
           </div>
-        </div>
+        </div>-->
       </div>
       <van-button class="query-btn" type="primary" @click="querySever">查询</van-button>
     </div>
@@ -82,13 +76,13 @@
           </div>
         </div>
 
-        <div class="item">
+        <!-- <div class="item">
           <span>请输入验证码</span>
           <div class="value verif">
             <van-field v-model="param[1].code" />
             <img class="verif-img" v-lazy="dxcodeImg" @click="refreshCode" alt />
           </div>
-        </div>
+        </div>-->
       </div>
       <van-button class="query-btn" type="primary" @click="queryExamination()">查询</van-button>
     </div>
@@ -116,13 +110,13 @@
           </div>
         </div>
 
-        <div class="item">
+        <!-- <div class="item">
           <span>请输入验证码</span>
           <div class="value verif">
             <van-field v-model="param[2].code" />
             <img class="verif-img" v-lazy="dxcodeImg" @click="refreshCode" alt />
           </div>
-        </div>
+        </div>-->
       </div>
       <van-button class="query-btn" type="primary" @click="queryTrain()">查询</van-button>
     </div>
@@ -248,7 +242,7 @@ export default {
     },
     onConfirmProvince (value) {
       if (!value.length) {
-        this.qualificationName = ''
+        this.provinceNames[this.active] = ''
         this.param[this.active].provinceCode = ['']
         return
       }
@@ -292,64 +286,55 @@ export default {
       })
     },
     querySever () {
-      if (!this.param[0].code) {
-        this.toast('请输入验证码')
-        return
-      }
-      if (this.param[0].code.length !== 4) {
-        this.toast('验证码错误')
-        return
-      }
-
       const dwlxarr = this.param[0].dwlxarr.join()
       const provinceCode = this.param[0].provinceCode[0]
 
-      this.$router.push({
-        name: 'orgList',
-        query: { type: 1, ...this.param[0], dwlxarr, provinceCode }
+      api.getServiceOrg({ page: 0, ...this.param[0], dwlxarr, provinceCode }).then(({ code, msg }) => {
+        console.log(code, msg);
+        if (code === 10000) {
+          this.$router.push({
+            name: 'orgList',
+            query: { type: 1, ...this.param[0], dwlxarr, provinceCode }
+          })
+        } else {
+          this.toast(msg)
+        }
       })
     },
     queryExamination () {
-      if (!this.param[1].code) {
-        this.toast('请输入验证码')
-        return
-      }
-      if (this.param[1].code.length !== 4) {
-        this.toast('验证码错误')
-        return
-      }
-
       const obj = JSON.parse(JSON.stringify(this.param[1]))
       obj.valid = obj.valid ? 1 : 0
       obj.oneCheckTwo = obj.oneCheckTwo ? 1 : undefined
       obj.provinceCode = obj.provinceCode[0]
 
-      this.$router.push({
-        name: 'orgList',
-        query: { type: 2, ...obj }
+      api.getExaminationData({ page: 0, ...obj }).then(({ code, msg }) => {
+        if (code === 10000) {
+          this.$router.push({
+            name: 'orgList',
+            query: { type: 2, ...obj }
+          })
+        } else {
+          this.toast(msg)
+        }
       })
-
-      this.param[1].code = ''
     },
     queryTrain () {
-      const params = this.param[2]
-      if (!params.code) {
-        this.toast('请输入验证码')
-        return
-      }
-      if (params.code.length !== 4) {
-        this.toast('验证码错误')
-        return
-      }
+      const params = { ...this.param[2] }
+      params.trainProject = params.trainProject[0]
+      params.provinceCode = params.provinceCode[0]
 
-      const trainProject = params.trainProject[0]
-      this.$router.push({
-        name: 'orgList',
-        query: { type: 3, ...params, provinceCode: params.provinceCode[0], trainProject }
+      api.getTrain({ page: 0, ...params }).then(({ code, msg }) => {
+        if (code === 10000) {
+          this.$router.push({
+            name: 'orgList',
+            query: { type: 3, ...params }
+          })
+        } else {
+          this.toast(msg)
+        }
       })
-
-      this.param[2].code = ''
     },
+    /** 获取字段词典 */
     getOrgDict (obj) {
       const dict = JSON.parse(sessionStorage.getItem('orgDict'))
       if (dict) {
@@ -367,22 +352,18 @@ export default {
         })
       }
     },
-    changeTab () {
-      this.param[this.active].code = ''
-      this.refreshCode()
-    },
-    async refreshCode () {
-      await api.scoreInit()
-      this.getDxcodeImg()
-    }
+    // changeTab () {
+    //   this.param[this.active].code = ''
+    //   this.refreshCode()
+    // },
+    // async refreshCode () {
+    //   await api.scoreInit()
+    //   this.getDxcodeImg()
+    // }
   },
   mounted () {
-    this.refreshCode()
+    // this.refreshCode()
     this.getOrgDict()
-  },
-  activated () {
-    this.refreshCode()
-    this.param[this.active].code = ''
   },
 }
 </script>

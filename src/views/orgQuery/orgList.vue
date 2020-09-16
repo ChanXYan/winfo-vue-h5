@@ -122,18 +122,11 @@ export default {
         }
       }
     },
-    checkCode (code, message) {
+    checkCode (code) {
       if (code === 0) {
         this.$dialog.alert({
           title: '',
           message: `未查询到符合条件的信息，\r\n请确认查询条件是否正确`,
-          confirmButtonColor: '#0176FF'
-        }).then(() => { this.$router.back() })
-      }
-      if (code === -1) {
-        this.$dialog.alert({
-          title: '',
-          message,
           confirmButtonColor: '#0176FF'
         }).then(() => { this.$router.back() })
       }
@@ -186,7 +179,6 @@ export default {
           await this.getTrain()
           break
       }
-      this.reqParams.code = undefined
     },
     getOrgDict (obj) {
       this.dict = JSON.parse(sessionStorage.getItem('orgDict'))
