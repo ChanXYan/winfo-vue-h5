@@ -528,8 +528,8 @@ export default {
       }
       this.updateCodeImg()
     },
-    updateCodeImg () {
-      this.init()
+    async updateCodeImg () {
+      await this.init()
       this.getDxcodeImg()
     },
     chooseBmDate (e) {
@@ -873,7 +873,11 @@ export default {
     },
     // 获取验证码cookie
     init () {
-      api.scoreInit()
+      return new Promise(resolve => {
+        api.scoreInit().then(() => {
+          resolve(true)
+        })
+      })
     }
 
   },
