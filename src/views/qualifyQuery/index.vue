@@ -524,11 +524,14 @@ export default {
     changeTab () {
       let filterList = [0, 1, 2]
       if (filterList.includes(this.active)) {
-        this.getDxcodeImg()
         this.formObj[this.active].dxcode = ''
       }
+      this.updateCodeImg()
     },
-
+    updateCodeImg () {
+      this.init()
+      this.getDxcodeImg()
+    },
     chooseBmDate (e) {
       const [start, end] = e
       this.showBmCalendar = false
@@ -608,6 +611,7 @@ export default {
             name: 'crewCertificate'
           })
         } else {
+          this.updateCodeImg()
           this.alertInfo()
         }
       })
@@ -673,6 +677,7 @@ export default {
             name: 'crewScore',
           })
         } else {
+          this.updateCodeImg()
           this.toast('没有查询到数据')
         }
       })
@@ -730,11 +735,18 @@ export default {
         code: dxcode,//验证码
       }
 
-      this.ls.set('examPlan', params)
-      this.$router.push({
-        path: '/examPlan'
-      })
 
+      api.getExamPlan(params).then(res => {
+        if (res.code === 10000) {
+          this.ls.set('examPlan', params)
+          this.$router.push({
+            path: '/examPlan'
+          })
+        } else {
+          this.updateCodeImg()
+          this.toast(res.msg)
+        }
+      })
 
     },
     //获取考试科目
@@ -887,8 +899,7 @@ export default {
 
   },
   activated () {
-    this.init()
-    this.getDxcodeImg()
+    this.updateCodeImg()
     this.getExamDict()
     //获取验船师列表
     this.getExamRoomPublicApi()

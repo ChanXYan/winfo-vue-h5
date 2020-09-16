@@ -473,5 +473,10 @@ export default {
       }
     }
   }
+
+  .van-field__value {
+    display: flex;
+    align-items: center;
+  }
 }
 </style>
