@@ -686,7 +686,7 @@ export default {
     },
     //适任考试
     examPlanApi () {
-      let { type, subject, org, ksStart, ksEnd, bmStart, bmEnd, dxcode } = this.formObj[2]
+      let { type, subject, org, ksStart, ksEnd, bmStart, bmEnd } = this.formObj[2]
       // if (type.length === 0) {
       //   this.toast('请选择考试类型')
       //   return
