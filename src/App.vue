@@ -1,13 +1,3 @@
-<template>
-  <div id="app">
-    <transition :name="transitionName">
-      <keep-alive v-if="$route.meta.keepAlive">
-        <router-view :key="$route.fullPath" />
-      </keep-alive>
-      <router-view v-if="!$route.meta.keepAlive" />
-    </transition>
-  </div>
-</template>
 
 <script>
 export default {
@@ -15,6 +5,27 @@ export default {
     return {
       transitionName: 'fade'
     }
+  },
+  render () {
+    const { $route: { meta, fullPath }, transitionName } = this
+    const { keepAlive } = meta
+    const inKeep = (
+      <div id="app">
+        <transition name={transitionName}>
+          <keep-alive>
+            <router-view key={fullPath} />
+          </keep-alive>
+        </transition>
+      </div >
+    )
+    const notKeep = (
+      <div id="app">
+        <transition name={transitionName}>
+          <router-view />
+        </transition>
+      </div >
+    )
+    return keepAlive ? inKeep : notKeep
   }
 }
 </script>
