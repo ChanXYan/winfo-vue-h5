@@ -1,32 +1,20 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Video from '../views/video/video'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
-let modules = []
-const modulesFiles = require.context('./modules', false, /\.js$/)
-
-modulesFiles.keys().map(item => {
-  modules = [...modules, ...modulesFiles(item).default]
-})
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    meta: { title: '首页' },
-    component: Home
+    name: 'Video',
+    meta: { title: '直播拉流' },
+    component: Video
   },
-  ...modules,
-  {
-    path: "/test",
-    name: "test", //!!!!
-    meta: { title: '航行警告详情' },
-    component: () => import('../views/orgQuery/test.vue')
-  },
+
   {
     path: '*',
     component: () =>
